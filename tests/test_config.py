@@ -108,8 +108,9 @@ class TestMetaConfig:
             {"a": {"path": "a.json", "handler": SimpleHandler}},
         )
         instance = config()
-        with pytest.raises(TypeError):
-            instance()
+        result = instance()
+        assert isinstance(result, type(instance))
+        assert result.a.path == instance.a.path
 
 
 class TestMakeMetaconfig:

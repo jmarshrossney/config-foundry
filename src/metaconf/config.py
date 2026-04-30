@@ -23,17 +23,21 @@ class MetaConfig:
 
     def __post_init__(self) -> None:
         for field in dataclasses.fields(self):
+            value = getattr(self, field.name)
+            if isinstance(value, Node):
+                continue
             if (transform := field.metadata.get("transform")) is not None:
-                # Apply transform if specified
-                setattr(self, field.name, transform(getattr(self, field.name)))
-
-            if not isinstance(getattr(self, field.name), Node):
-                # try to coerce to a Node
-                setattr(self, field.name, to_node(getattr(self, field.name)))
+                setattr(self, field.name, transform(value))
+            else:
+                setattr(self, field.name, to_node(value))
 
     def __call__(self) -> Self:
-        # TODO: figure out if this is sufficient for nested MetaConfig objects
-        return type(self)(**dataclasses.asdict(self))
+        init_kwargs = {
+            field.name: getattr(self, field.name)
+            for field in dataclasses.fields(self)
+            if field.init
+        }
+        return type(self)(**init_kwargs)
 
     def read(self, path: str | PathLike) -> dict[str, Any]:
         """Read a configuration from a given path and return its contents as a dict.
