@@ -4,7 +4,7 @@ from collections.abc import Callable
 from os import PathLike
 from pathlib import Path
 
-from .handler import Handler, HandlerFactory, infer_handler_from_path, parse_handler
+from .handler import HandlerFactory, infer_handler_from_path, parse_handler
 
 
 @dataclasses.dataclass
@@ -34,19 +34,8 @@ class Node:
         elif not path.resolve().is_relative_to(Path.cwd()):
             raise ValueError("`path` should not include '..'")
 
-        # Parsing + validation of handler
-        handler = parse_handler(self.handler)
-        try:
-            handler_inst = handler()
-        except TypeError as exc:
-            raise TypeError("`handler` must be a zero-argument callable!") from exc
-        if not isinstance(handler_inst, Handler):
-            raise TypeError(
-                f"`handler` must return a Handler, got {type(handler_inst)}"
-            )
-
         self.path = path
-        self.handler = handler
+        self.handler = parse_handler(self.handler)
 
 
 def dict_to_node(path_and_handler: dict) -> Node:
