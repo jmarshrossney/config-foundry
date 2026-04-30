@@ -31,7 +31,7 @@ class Node:
                 "Did you mean to do this?",
                 stacklevel=2,
             )
-        elif not path.resolve().is_relative_to(Path.cwd()):
+        elif ".." in path.parts:
             raise ValueError("`path` should not include '..'")
 
         self.path = path

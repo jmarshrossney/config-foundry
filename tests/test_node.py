@@ -44,6 +44,10 @@ class TestNode:
         with pytest.raises(ValueError, match=r"'..'"):
             Node(path="../etc/passwd", handler=DummyHandler)
 
+    def test_create_node_with_dots_in_parts_raises(self):
+        with pytest.raises(ValueError, match=r"'..'"):
+            Node(path="subdir/../other", handler=DummyHandler)
+
     def test_create_node_with_handler_string(self):
         from metaconf.handler import register_handler
 
