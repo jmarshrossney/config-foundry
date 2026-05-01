@@ -28,7 +28,13 @@ class switch_dir:
 
     def __exit__(self, etype, value, traceback):
         logger.debug(f"Switching directory back to {self.old}")
-        os.chdir(self.old)
+        try:
+            os.chdir(self.old)
+        except FileNotFoundError:
+            logger.warning(
+                f"Original directory '{self.old}' no longer exists. "
+                f"Remaining in '{self.new}'."
+            )
 
 
 def _tree(path: pathlib.Path, prefix: str) -> Iterator[str]:
