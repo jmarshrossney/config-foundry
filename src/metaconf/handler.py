@@ -32,10 +32,19 @@ class Handler(Protocol):
 
 
 type ReadMethod = Callable[..., Any]
-"""Type alias for the `read` method of a handler."""
+"""Type alias for the `read` method of a handler.
+
+Expected signature: `(self, path: str | PathLike) -> Any`
+"""
 
 type WriteMethod = Callable[..., None]
-"""Type alias for the `write` method of a handler."""
+"""Type alias for the `write` method of a handler.
+
+Expected signature:
+   `(self, path: str | PathLike, data: Any, *, overwrite_ok: bool) -> None`
+Note: `Callable` cannot express keyword-only parameters or `self` binding.
+The `overwrite_ok` parameter must be passed as a keyword argument at runtime.
+"""
 
 type HandlerFactory = Callable[[], Handler]
 """Type alias for a zero-argument callable that returns a Handler."""
