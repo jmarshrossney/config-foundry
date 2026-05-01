@@ -21,8 +21,8 @@ class DummyHandler:
 
 
 class TestMISSING:
-    def test_missing_is_class(self):
-        assert isinstance(MISSING, type)
+    def test_missing_is_not_type(self):
+        assert not isinstance(MISSING, type)
 
     def test_missing_singleton_usage(self):
         val = MISSING

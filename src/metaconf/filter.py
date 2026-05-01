@@ -11,8 +11,8 @@ from .handler import Handler, ReadMethod, WriteMethod
 _H = TypeVar("_H", bound=Handler)
 
 
-class MISSING:
-    """A sentinel value that may be used in place of missing data."""
+MISSING = object()
+"""A sentinel value that may be used in place of missing data."""
 
 
 class MissingWarning(Warning):
