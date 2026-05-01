@@ -74,26 +74,5 @@ select = [
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.lint.isort]
-known-first-party = ["metaconf"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = "--tb=short"
-
-[tool.coverage.run]
-source = ["src/metaconf"]
-
-[tool.coverage.report]
-show_missing = true
-fail_under = 60
-
-[tool.pyright]
-typeCheckingMode = "basic"
-include = ["src/metaconf", "tests"]
-venvPath = "."
-venv = ".venv"
-reportMissingTypeStubs = false
-
 [tool.jupytext]
 formats = "ipynb,md"

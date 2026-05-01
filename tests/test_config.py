@@ -110,7 +110,7 @@ class TestMetaConfig:
         instance = config()
         result = instance()
         assert isinstance(result, type(instance))
-        assert result.a.path == instance.a.path
+        assert result.a.path == instance.a.path  # type: ignore[attr-defined]
 
 
 class TestMakeMetaconfig:

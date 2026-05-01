@@ -127,9 +127,9 @@ class TestFilterWriteOnClassBypassesFilter:
         Wrapped = filter_write(
             test=lambda path, data, **kw: False,  # always reject
             warn=False,
-        )(Handler)  # passing a CLASS (same pattern as existing test)
+        )(Handler)  # type: ignore[arg-type]  # passing a CLASS (same pattern as existing test)
 
-        Wrapped.write(Handler(), Path("test.txt"), {})
+        Wrapped.write(Handler(), Path("test.txt"), {})  # type: ignore[reportFunctionMemberAccess]  # functools.wraps copies class __dict__ onto function
 
         assert called, (
             "write was called despite test=False, confirming "
@@ -187,7 +187,7 @@ class TestFilter:
 
     def test_filter_requires_read_or_write(self):
         with pytest.raises(ValueError, match="Must provide"):
-            filter()(object)
+            filter()(object)  # type: ignore[arg-type]
 
     def test_filter_does_not_mutate_original_class(self):
         class OriginalHandler:

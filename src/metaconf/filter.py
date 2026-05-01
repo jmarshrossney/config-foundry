@@ -8,7 +8,7 @@ from typing import Any, TypeVar
 
 from .handler import Handler, ReadMethod, WriteMethod
 
-_H = TypeVar("_H", bound=Handler)
+_H = TypeVar("_H", bound=Handler)  # _H is Handler or FilteredHandler
 
 
 MISSING = object()
@@ -121,7 +121,7 @@ def filter(
     write: Callable[..., bool] | None = None,
     label: str | None = None,
     warn: bool = False,
-) -> Callable[[_H], _H]:
+) -> Callable[[Any], Any]:
     """A decorator for classes satisfying the `Handler` protocol.
 
     This provides an alternative to decorating both the `read` method
@@ -142,7 +142,7 @@ def filter(
     if not (read or write):
         raise ValueError("Must provide at least one of (`read`, `write`).")
 
-    def decorator(cls: _H) -> _H:
+    def decorator(cls: Any) -> Any:
         original_read = cls.read
         original_write = cls.write
 
@@ -165,7 +165,7 @@ def filter(
     return decorator
 
 
-def filter_missing(warn: bool = False) -> Callable[[_H], _H]:
+def filter_missing(warn: bool = False) -> Callable[[Any], Any]:
     """Filter out non-existent paths from `read` and `MISSING` data from `write.
 
     This is implemented purely for convenience, since it simply calls

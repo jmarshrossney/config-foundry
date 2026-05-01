@@ -16,7 +16,7 @@ test-cov:
 
 # Run static type checker.
 typecheck:
-  pyright src/metaconf
+  pyright
 
 # Build the example notebooks.
 examples:
