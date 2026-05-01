@@ -78,8 +78,7 @@ class TestFilterWrite:
                 written = True
 
         handler = WriteHandler()
-        WrappedClass = filter_write(test=lambda path, data, **kw: True)(WriteHandler)
-        wrapped = WrappedClass.write
+        wrapped = filter_write(test=lambda path, data, **kw: True)(WriteHandler.write)
         wrapped(handler, Path("test.txt"), {"key": "val"}, overwrite_ok=True)
         assert written
 
@@ -98,6 +97,67 @@ class TestFilterWrite:
             wrapped(
                 DummyHandler(), Path("test.txt"), {"key": "val"}, overwrite_ok=False
             )
+
+
+class TestFilterWriteOnClassBypassesFilter:
+    """Confirms that passing a class to filter_write bypasses the filter.
+
+    The existing test_filter_write_passes_when_test_true passes a class
+    (WriteHandler) to filter_write. functools.wraps copies the class
+    __dict__ (including the write method) into the wrapper function's
+    attribute dict, so WrappedClass.write resolves to the original
+    unwrapped method. This test proves the filter is never invoked.
+    """
+
+    @pytest.mark.xfail(
+        strict=False,
+        reason="filter_write should reject classes, not silently bypass the filter",
+    )
+    def test_write_on_class_bypasses_filter(self):
+        called = False
+
+        class Handler:
+            def read(self, path):
+                return {}
+
+            def write(self, path, data, *, overwrite_ok=False):
+                nonlocal called
+                called = True
+
+        Wrapped = filter_write(
+            test=lambda path, data, **kw: False,  # always reject
+            warn=False,
+        )(Handler)  # passing a CLASS (same pattern as existing test)
+
+        Wrapped.write(Handler(), Path("test.txt"), {})
+
+        assert called, (
+            "write was called despite test=False, confirming "
+            "the filter was bypassed via functools.wraps class-__dict__ copying"
+        )
+
+    def test_write_on_method_respects_filter(self):
+        called = False
+
+        class Handler:
+            def read(self, path):
+                return {}
+
+            def write(self, path, data, *, overwrite_ok=False):
+                nonlocal called
+                called = True
+
+        Wrapped = filter_write(
+            test=lambda path, data, **kw: False,  # always reject
+            warn=False,
+        )(Handler.write)  # passing a METHOD (correct usage)
+
+        Wrapped(Handler(), Path("test.txt"), {})
+
+        assert not called, (
+            "write was NOT called because the filter correctly "
+            "returned early when test=False"
+        )
 
 
 class TestFilter:
