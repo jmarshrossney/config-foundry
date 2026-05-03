@@ -11,7 +11,7 @@ authors = [
 description = "Simple meta-configuration of configuration files using Python dataclasses."
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dependencies = []
 keywords = ["configuration", "config"]
 classifiers = [
@@ -29,6 +29,7 @@ dev = [
     {include-group = "test"},
 ]
 docs = [
+    "marimo-md-export>=0.1.1",
     "markdown-exec[ansi]>=1.11.0",
     "mkdocs>=1.6.1",
     "mkdocs-include-exclude-files>=0.1.0",
@@ -36,6 +37,7 @@ docs = [
     "mkdocs-ipynb>=0.1.1",
     "mkdocs-material>=9.6.16",
     "mkdocstrings[python]>=0.30.0",
+    "zensical>=0.0.39",
 ]
 examples = [
     "jupyter>=1.1.1",
@@ -59,7 +61,7 @@ venv = ".venv"
 [tool.ruff]
 line-length = 88
 indent-width = 4
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [
