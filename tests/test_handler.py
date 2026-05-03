@@ -1,6 +1,6 @@
 import pytest
 
-from metaconf.handler import (
+from config_foundry.handler import (
     handler_registry,
     infer_handler_from_path,
     parse_handler,

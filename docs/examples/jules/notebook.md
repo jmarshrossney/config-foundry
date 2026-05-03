@@ -24,7 +24,7 @@ Documentation is available at [https://jules-lsm.github.io](https://jules-lsm.gi
 from os import PathLike
 from pathlib import Path
 
-import metaconf
+import config_foundry
 ```
 
 ## Namelists
@@ -131,7 +131,7 @@ _jules_namelists = [
     "urban",
 ]
 
-NamelistDirectoryHandler = metaconf.make_metaconfig(
+NamelistDirectoryHandler = config_foundry.make_metaconfig(
     cls_name="NamelistDirectoryHandler",
     spec={
         name: {"path": f"{name}.nml", "handler": NamelistFileHandler}
@@ -174,10 +174,10 @@ We can use `numpy` to read and write floating point ascii data.
 from typing import TypedDict
 import numpy
 
-@metaconf.filter(
+@config_foundry.filter(
     write=lambda path, data, **_: not path.is_absolute()
 )
-@metaconf.filter_missing()
+@config_foundry.filter_missing()
 class AsciiFileHandler:
     class AsciiData(TypedDict):
         values: numpy.ndarray
@@ -238,11 +238,11 @@ We will use `xarray` to read and write input data in the `netCDF` format.
 ```python
 import xarray
 
-@metaconf.filter(
+@config_foundry.filter(
     read=lambda path: not path.is_absolute(),
     write=lambda path, data, **_: not path.is_absolute()
 )
-@metaconf.filter_missing()
+@config_foundry.filter_missing()
 class NetcdfFileHandler:
     def read(self, path: str | PathLike) -> xarray.Dataset:
         dataset = xarray.load_dataset(path)
@@ -259,13 +259,13 @@ class NetcdfFileHandler:
 ## Putting it together
 
 ```python
-metaconf.register_handler("ascii", AsciiFileHandler, [".txt", ".dat", ".asc"])
-metaconf.register_handler("netcdf", NetcdfFileHandler, [".nc", ".cdf"])
+config_foundry.register_handler("ascii", AsciiFileHandler, [".txt", ".dat", ".asc"])
+config_foundry.register_handler("netcdf", NetcdfFileHandler, [".nc", ".cdf"])
 
 ```
 
 ```python
-InputFilesConfig = metaconf.make_metaconfig(
+InputFilesConfig = config_foundry.make_metaconfig(
     cls_name="InputFilesConfig",
     spec={
         "initial_conditions": {
@@ -281,7 +281,7 @@ InputFilesConfig = metaconf.make_metaconfig(
 ```
 
 ```python
-JulesConfigHandler = metaconf.make_metaconfig(
+JulesConfigHandler = config_foundry.make_metaconfig(
     cls_name="JulesConfigHandler",
     spec={
         "inputs": {},  # we will fix this upon instantiation
@@ -295,7 +295,7 @@ JulesConfigHandler = metaconf.make_metaconfig(
 ## Reading an existing configuration
 
 ```python
-from metaconf.utils import tree
+from config_foundry.utils import tree
     
 print(tree("./config"))
 ```

@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from metaconf.handler import handler_registry
-from metaconf.node import Node, dict_to_node, path_to_node, to_node
+from config_foundry.handler import handler_registry
+from config_foundry.node import Node, dict_to_node, path_to_node, to_node
 
 
 class DummyHandler:
@@ -49,7 +49,7 @@ class TestNode:
             Node(path="subdir/../other", handler=DummyHandler)
 
     def test_create_node_with_handler_string(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("dummy", DummyHandler)
         node = Node(path="test.txt", handler="dummy")  # type: ignore[arg-type]
@@ -66,7 +66,7 @@ class TestNode:
 
 class TestDictToNode:
     def test_dict_to_node(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("dummy", DummyHandler)
         node = dict_to_node({"path": "test.txt", "handler": "dummy"})
@@ -82,7 +82,7 @@ class TestPathToNode:
         assert node.path == Path("test.txt")
 
     def test_path_to_node_infer_handler(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("txt", DummyHandler, extensions=[".txt"])
         transform = path_to_node()
@@ -90,7 +90,7 @@ class TestPathToNode:
         assert isinstance(node, Node)
 
     def test_path_to_node_from_dict(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("txt", DummyHandler, extensions=[".txt"])
         transform = path_to_node()
@@ -106,21 +106,21 @@ class TestToNode:
         assert result is original
 
     def test_to_node_from_str(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("txt", DummyHandler, extensions=[".txt"])
         node = to_node("test.txt")
         assert isinstance(node, Node)
 
     def test_to_node_from_dict_with_handler(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("dummy", DummyHandler)
         node = to_node({"path": "test.txt", "handler": "dummy"})
         assert isinstance(node, Node)
 
     def test_to_node_from_dict_without_handler(self):
-        from metaconf.handler import register_handler
+        from config_foundry.handler import register_handler
 
         register_handler("txt", DummyHandler, extensions=[".txt"])
         node = to_node({"path": "test.txt"})

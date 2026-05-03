@@ -1,9 +1,9 @@
-site_name: metaconf
-site_description: Documentation for the `metaconf` Python package.
-site_url: https://jmarshrossney.github.io/metaconf
+site_name: config-foundry
+site_description: Documentation for the `config-foundry` Python package.
+site_url: https://jmarshrossney.github.io/config-foundry
 
-repo_url: https://github.com/jmarshrossney/metaconf
-repo_name: jmarshrossney/metaconf
+repo_url: https://github.com/jmarshrossney/config-foundry
+repo_name: jmarshrossney/config-foundry
 
 # NOTE: we can switch this to `true` when we publish the docs, since it
 # leads to nicer urls, but `false` means we can browse the docs locally

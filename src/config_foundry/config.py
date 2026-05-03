@@ -17,8 +17,8 @@ class MetaConfig:
     """A base dataclass representing a collection of configuration files.
 
     This either be subclassed explicitly, i.e. via `class MyConfig(MetaConfig): ...`,
-    or through the [`make_metaconfig`][metaconf.config.make_metaconfig] function.
-    All fields are expected to be instances of [`Node`][metaconf.node.Node].
+    or through the [`make_metaconfig`][config_foundry.config.make_metaconfig] function.
+    All fields are expected to be instances of [`Node`][config_foundry.node.Node].
     """
 
     def __post_init__(self) -> None:
@@ -72,7 +72,7 @@ class MetaConfig:
             and whose values contain the data to be written.
           overwrite_ok: A flag indicating whether overwriting existing files is
             acceptable. Nothing is done with this argument other than to pass it
-            to the [`write`][metaconf.handler.Handler.write] method for all of the
+            to the [`write`][config_foundry.handler.Handler.write] method for all of the
             handlers.
         """
         path = Path(path)
@@ -97,7 +97,7 @@ class MetaConfig:
             passing `recurse=True` will also yield the nodes from these children.
 
         Yields:
-          nodes: Instances of [`Node`][metaconf.node.Node] corresponding to the
+          nodes: Instances of [`Node`][config_foundry.node.Node] corresponding to the
             files and directories in the configuration.
         """
         for field in dataclasses.fields(self):
@@ -237,7 +237,7 @@ def make_metaconfig(
 
     This is a wrapper around
     [`dataclasses.make_dataclass`](https://docs.python.org/3/library/dataclasses.html#dataclasses.make_dataclass)
-    that sets the base class to [metaconf.config.MetaConfig][] and constructs
+    that sets the base class to [config_foundry.config.MetaConfig][] and constructs
     fields using the provided `spec`.
 
     Arguments:

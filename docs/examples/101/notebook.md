@@ -22,12 +22,12 @@ jupyter:
 
 #### A simple configuration
 
-We will demonstrate basic usage of `metaconf` using a simple configuration containing a [YAML](https://en.wikipedia.org/wiki/YAML) file called `config.yml` and a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file called `data.csv`.
+We will demonstrate basic usage of `config-foundry` using a simple configuration containing a [YAML](https://en.wikipedia.org/wiki/YAML) file called `config.yml` and a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file called `data.csv`.
 
 A concrete instance of this configuration already exists in the `./basic` directory.
 
 ```python
-from metaconf.utils import tree
+from config_foundry.utils import tree
 
 print(tree("./basic"))
 ```
@@ -91,10 +91,10 @@ CsvFileHandler().read("./basic/data.csv")
 
 The next step is to specify a valid configuration in terms of its files and handlers.
 
-To do this we will use the [`make_metaconfig`][metaconf.config.make_metaconfig] function, which produces a subclass of [`MetaConfig`][metaconf.config.MetaConfig] whose fields correspond to the two required files.
+To do this we will use the [`make_metaconfig`][config_foundry.config.make_metaconfig] function, which produces a subclass of [`MetaConfig`][config_foundry.config.MetaConfig] whose fields correspond to the two required files.
 
 ```python
-from metaconf import make_metaconfig
+from config_foundry import make_metaconfig
 
 ConfigHandler = make_metaconfig(
     cls_name="ConfigHandler",
@@ -110,7 +110,7 @@ ConfigHandler = make_metaconfig(
 
 #### String representation
 
-Instances of `MetaConfig` have a convenient string representation derived from [`MetaConfig.tree`][metaconf.config.MetaConfig.tree].
+Instances of `MetaConfig` have a convenient string representation derived from [`MetaConfig.tree`][config_foundry.config.MetaConfig.tree].
 
 ```python
 handler = ConfigHandler()
@@ -119,7 +119,7 @@ print(handler)
 
 #### Reading configurations
 
-Once a `MetaConfig` is instantiated, configurations are read into a `dict` by passing a path to a configuration directory into the [`read`][metaconf.config.MetaConfig.read] method.
+Once a `MetaConfig` is instantiated, configurations are read into a `dict` by passing a path to a configuration directory into the [`read`][config_foundry.config.MetaConfig.read] method.
 
 ```python
 config_dict = handler.read("./basic")
@@ -129,7 +129,7 @@ config_dict
 
 #### Writing configurations
 
-In-memory configurations can be written to the filesystem using the [`write`][metaconf.config.MetaConfig.write] method.
+In-memory configurations can be written to the filesystem using the [`write`][config_foundry.config.MetaConfig.write] method.
 
 For the purpose of illustration we will modify the configuration and then write it to a temporary directory.
 
@@ -147,7 +147,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
 
 #### Accessing the nodes
 
-Keep in mind that classes derived from `MetaConfig` as essentially [dataclasses](https://docs.python.org/3/library/dataclasses.html) whose fields are instances of [`Node`][metaconf.node.Node] (itself a dataclass!).
+Keep in mind that classes derived from `MetaConfig` as essentially [dataclasses](https://docs.python.org/3/library/dataclasses.html) whose fields are instances of [`Node`][config_foundry.node.Node] (itself a dataclass!).
 As such, the usual way of accessing dataclass fields applies.
 
 ```python
@@ -270,7 +270,7 @@ handler = VariableHandler(config={"path": "config.json", "handler": JsonFileHand
 To save some typing, we can register handlers to a handler registry.
 
 ```python
-from metaconf import register_handler
+from config_foundry import register_handler
 
 register_handler("yaml", YamlFileHandler, extensions=[".yml", ".yaml"])
 register_handler("json", JsonFileHandler, extensions=[".json"])
@@ -311,7 +311,7 @@ In some situations we might want to handle missing data differently. Sometimes c
 Another use-case would be reading from a 'template' configuration that is incomplete, requiring additional data which we will merge into the Python `dict` before writing the complete configuration to a new location.
 
 ```python
-from metaconf.filter import filter_missing
+from config_foundry.filter import filter_missing
 
 @filter_missing(warn=True)
 class DummyHandler:
@@ -343,7 +343,7 @@ config = handler.read("./basic")
 
 We see that `DummyHandler.read` was never called, and instead we are shown a warning that `read('optional.file')` was filtered out by a test (which we are shown the code for). Note that this warning can be disabled by setting `warn=False` (the default) in `filter_missing`. 
 
-The configuration `dict` contains an entry corresponding to the `optional` node, but it has a special _sentinel_ value, [metaconf.filter.MISSING][].
+The configuration `dict` contains an entry corresponding to the `optional` node, but it has a special _sentinel_ value, [config_foundry.filter.MISSING][].
 
 ```python
 config
@@ -363,7 +363,7 @@ Once again we are shown a warning, which explains both what was filtered out and
 
 ### Filtering
 
-The `filter_missing` decorator is a special case of a more general [`filter`][metaconf.filter.filter] class decorator, which allows the user to specify tests which trigger the 'missingness' behaviour if they fail.
+The `filter_missing` decorator is a special case of a more general [`filter`][config_foundry.filter.filter] class decorator, which allows the user to specify tests which trigger the 'missingness' behaviour if they fail.
 
 We will now briefly run through some illustrative examples where filtering comes in useful.
 
@@ -371,12 +371,12 @@ We will now briefly run through some illustrative examples where filtering comes
 
 As an example, we will consider a situation where one of the files in a configuration is very large, and we want to avoid loading it into memory.
 
-This is easy to achieve by combining the already-familiar `filter_missing` with a custom filter applied to the `read` method, using [`filter_read`][metaconf.filter.filter_read]. 
+This is easy to achieve by combining the already-familiar `filter_missing` with a custom filter applied to the `read` method, using [`filter_read`][config_foundry.filter.filter_read]. 
 
 We will demonstrate this by creating a subclass of `CsvFileHandler` from earlier.
 
 ```python
-from metaconf.filter import filter_read
+from config_foundry.filter import filter_read
 
 @filter_missing()
 class PotentiallyLargeFileHandler(CsvFileHandler):
@@ -418,7 +418,7 @@ config
 #### Skipping absolute paths
 
 ```python
-from metaconf.filter import filter
+from config_foundry.filter import filter
 
 @filter(
     read=lambda path: not path.is_absolute(),
@@ -459,7 +459,7 @@ with tempfile.TemporaryDirectory() as temp_dir:
 In this example, we will read an incomplete configuration from `./basic`, and only upon `write` will we inject metadata into the configuration.
 
 ```python
-from metaconf.filter import filter_missing
+from config_foundry.filter import filter_missing
 
 ConfigHandler = make_metaconfig(
     cls_name="ConfigHandler",
