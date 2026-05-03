@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from metaconf import make_metaconfig, register_handler
+from config_foundry import make_metaconfig, register_handler
 
 logging.getLogger().setLevel(logging.INFO)
 

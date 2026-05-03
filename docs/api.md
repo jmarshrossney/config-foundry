@@ -1,20 +1,20 @@
 # API Reference
 
-::: metaconf.config
+::: config_foundry.config
 
 ---
 
-::: metaconf.filter
+::: config_foundry.filter
 
 ---
 
-::: metaconf.handler
+::: config_foundry.handler
 
 ---
 
-::: metaconf.node
+::: config_foundry.node
 
 ---
 
-::: metaconf.utils
+::: config_foundry.utils
 

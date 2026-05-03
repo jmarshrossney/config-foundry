@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from metaconf.utils import dict_to_namespace, namespace_to_dict, switch_dir, tree
+from config_foundry.utils import dict_to_namespace, namespace_to_dict, switch_dir, tree
 
 
 class TestSwitchDir:

@@ -380,6 +380,95 @@ wheels = [
 ]
 
 [[package]]
+name = "config-foundry"
+version = "0.4.0"
+source = { editable = "." }
+
+[package.dev-dependencies]
+dev = [
+    { name = "coverage" },
+    { name = "markdown-exec", extra = ["ansi"] },
+    { name = "mkdocs" },
+    { name = "mkdocs-include-exclude-files" },
+    { name = "mkdocs-include-markdown-plugin" },
+    { name = "mkdocs-ipynb" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+    { name = "rust-just" },
+]
+docs = [
+    { name = "markdown-exec", extra = ["ansi"] },
+    { name = "mkdocs" },
+    { name = "mkdocs-include-exclude-files" },
+    { name = "mkdocs-include-markdown-plugin" },
+    { name = "mkdocs-ipynb" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+]
+examples = [
+    { name = "f90nml" },
+    { name = "jupyter" },
+    { name = "jupytext" },
+    { name = "netcdf4" },
+    { name = "numpy" },
+    { name = "pyyaml" },
+    { name = "xarray" },
+]
+test = [
+    { name = "coverage" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "coverage", specifier = ">=7.13.5" },
+    { name = "markdown-exec", extras = ["ansi"], specifier = ">=1.11.0" },
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-include-exclude-files", specifier = ">=0.1.0" },
+    { name = "mkdocs-include-markdown-plugin", specifier = ">=7.1.6" },
+    { name = "mkdocs-ipynb", specifier = ">=0.1.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.16" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
+    { name = "pre-commit", specifier = ">=4.2.0" },
+    { name = "pyright", specifier = ">=1.1.402" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-cov", specifier = ">=7.1.0" },
+    { name = "ruff", specifier = ">=0.12.3" },
+    { name = "rust-just", specifier = ">=1.50.0" },
+]
+docs = [
+    { name = "markdown-exec", extras = ["ansi"], specifier = ">=1.11.0" },
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-include-exclude-files", specifier = ">=0.1.0" },
+    { name = "mkdocs-include-markdown-plugin", specifier = ">=7.1.6" },
+    { name = "mkdocs-ipynb", specifier = ">=0.1.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.16" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
+]
+examples = [
+    { name = "f90nml", specifier = ">=1.4.5" },
+    { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "jupytext", specifier = ">=1.17.2" },
+    { name = "netcdf4", specifier = ">=1.7.2" },
+    { name = "numpy", specifier = ">=2.3.2" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "xarray", specifier = ">=2025.7.1" },
+]
+test = [
+    { name = "coverage", specifier = ">=7.13.5" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-cov", specifier = ">=7.1.0" },
+]
+
+[[package]]
 name = "coverage"
 version = "7.13.5"
 source = { registry = "https://pypi.org/simple" }
@@ -1180,95 +1269,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/3a/41/580bb4006e3ed0361b8151a01d324fb03f420815446c7def45d02f74c270/mergedeep-1.3.4.tar.gz", hash = "sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8", size = 4661, upload-time = "2021-02-05T18:55:30.623Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2c/19/04f9b178c2d8a15b076c8b5140708fa6ffc5601fb6f1e975537072df5b2a/mergedeep-1.3.4-py3-none-any.whl", hash = "sha256:70775750742b25c0d8f36c55aed03d24c3384d17c951b3175d898bd778ef0307", size = 6354, upload-time = "2021-02-05T18:55:29.583Z" },
-]
-
-[[package]]
-name = "metaconf"
-version = "0.4.0"
-source = { editable = "." }
-
-[package.dev-dependencies]
-dev = [
-    { name = "coverage" },
-    { name = "markdown-exec", extra = ["ansi"] },
-    { name = "mkdocs" },
-    { name = "mkdocs-include-exclude-files" },
-    { name = "mkdocs-include-markdown-plugin" },
-    { name = "mkdocs-ipynb" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings", extra = ["python"] },
-    { name = "pre-commit" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "rust-just" },
-]
-docs = [
-    { name = "markdown-exec", extra = ["ansi"] },
-    { name = "mkdocs" },
-    { name = "mkdocs-include-exclude-files" },
-    { name = "mkdocs-include-markdown-plugin" },
-    { name = "mkdocs-ipynb" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings", extra = ["python"] },
-]
-examples = [
-    { name = "f90nml" },
-    { name = "jupyter" },
-    { name = "jupytext" },
-    { name = "netcdf4" },
-    { name = "numpy" },
-    { name = "pyyaml" },
-    { name = "xarray" },
-]
-test = [
-    { name = "coverage" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-]
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "coverage", specifier = ">=7.13.5" },
-    { name = "markdown-exec", extras = ["ansi"], specifier = ">=1.11.0" },
-    { name = "mkdocs", specifier = ">=1.6.1" },
-    { name = "mkdocs-include-exclude-files", specifier = ">=0.1.0" },
-    { name = "mkdocs-include-markdown-plugin", specifier = ">=7.1.6" },
-    { name = "mkdocs-ipynb", specifier = ">=0.1.1" },
-    { name = "mkdocs-material", specifier = ">=9.6.16" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
-    { name = "pre-commit", specifier = ">=4.2.0" },
-    { name = "pyright", specifier = ">=1.1.402" },
-    { name = "pytest", specifier = ">=8.4.1" },
-    { name = "pytest-cov", specifier = ">=7.1.0" },
-    { name = "ruff", specifier = ">=0.12.3" },
-    { name = "rust-just", specifier = ">=1.50.0" },
-]
-docs = [
-    { name = "markdown-exec", extras = ["ansi"], specifier = ">=1.11.0" },
-    { name = "mkdocs", specifier = ">=1.6.1" },
-    { name = "mkdocs-include-exclude-files", specifier = ">=0.1.0" },
-    { name = "mkdocs-include-markdown-plugin", specifier = ">=7.1.6" },
-    { name = "mkdocs-ipynb", specifier = ">=0.1.1" },
-    { name = "mkdocs-material", specifier = ">=9.6.16" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
-]
-examples = [
-    { name = "f90nml", specifier = ">=1.4.5" },
-    { name = "jupyter", specifier = ">=1.1.1" },
-    { name = "jupytext", specifier = ">=1.17.2" },
-    { name = "netcdf4", specifier = ">=1.7.2" },
-    { name = "numpy", specifier = ">=2.3.2" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "xarray", specifier = ">=2025.7.1" },
-]
-test = [
-    { name = "coverage", specifier = ">=7.13.5" },
-    { name = "pytest", specifier = ">=8.4.1" },
-    { name = "pytest-cov", specifier = ">=7.1.0" },
 ]
 
 [[package]]

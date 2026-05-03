@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from metaconf import Handler, MetaConfig, make_metaconfig, register_handler
-from metaconf.config import _str_is_json, _str_is_path
-from metaconf.handler import handler_registry
-from metaconf.node import Node
+from config_foundry import Handler, MetaConfig, make_metaconfig, register_handler
+from config_foundry.config import _str_is_json, _str_is_path
+from config_foundry.handler import handler_registry
+from config_foundry.node import Node
 
 
 class SimpleHandler:
