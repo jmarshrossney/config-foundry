@@ -741,14 +741,32 @@ def _(CsvFileHandler, YamlFileHandler, filter_missing, make_metaconfig):
     )
     handler_with_meta = ConfigHandlerWithMeta()
     config_with_meta = handler_with_meta.read("./basic")
-    print(config_with_meta["metadata"])
+    config_with_meta
+    return config_with_meta, handler_with_meta
+
+
+@app.cell
+def _(config_with_meta, handler_with_meta, tempfile, tree):
+    config_with_meta["metadata"] = [
+        ["created_at", "2024-01-01"],
+        ["version", "1.0"],
+        ["source", "notebook"],
+    ]
+
+    with tempfile.TemporaryDirectory() as _temp_dir:
+        handler_with_meta.write(_temp_dir, config_with_meta)
+        print(tree(_temp_dir))
+
+        reread_config = handler_with_meta.read(_temp_dir)
+
+    reread_config["metadata"]
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    *Not yet finished.*
+    We replaced the `MISSING` sentinel with actual metadata before calling `write`, so the `filter_missing` test (`data is not MISSING`) passed and the CSV was written normally.
     """)
     return
 
