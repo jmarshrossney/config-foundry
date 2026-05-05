@@ -198,7 +198,6 @@ def _(mo):
 
 @app.cell
 def _(NamelistDirectoryHandler):
-    # @output: namelists_handler_print
     namelists_handler = NamelistDirectoryHandler()
 
     print(namelists_handler)
@@ -215,7 +214,6 @@ def _(mo):
 
 @app.cell
 def _(namelists_handler):
-    # @output: namelists_keys
     namelists_dict = namelists_handler.read("config/namelists")
 
     namelists_dict.keys()
@@ -224,7 +222,6 @@ def _(namelists_handler):
 
 @app.cell
 def _(namelists_dict):
-    # @output: drive_namelist
     namelists_dict["drive"]
     return
 
@@ -399,7 +396,6 @@ def _(mo):
 
 @app.cell
 def _():
-    # @output: tree_config
     from config_foundry.utils import tree
 
     print(tree("./config"))
@@ -408,7 +404,6 @@ def _():
 
 @app.cell
 def _(InputFilesConfig, JulesConfigHandler):
-    # @output: handler_print
     handler = JulesConfigHandler(
         namelists="namelists",
         inputs={
@@ -427,7 +422,6 @@ def _(InputFilesConfig, JulesConfigHandler):
 
 @app.cell
 def _(handler):
-    # @output: config_keys
     config = handler.read("./config")
 
     config.keys()
@@ -444,7 +438,6 @@ def _(mo):
 
 @app.cell
 def _(InputFilesConfig, JulesConfigHandler):
-    # @output: netcdf_handler_print
     handler_1 = JulesConfigHandler(
         namelists="namelists",
         inputs={
@@ -462,7 +455,6 @@ def _(InputFilesConfig, JulesConfigHandler):
 
 @app.cell
 def _(handler_1):
-    # @output: netcdf_config_keys
     config_1 = handler_1.read("./config")
     config_1.keys()
     return (config_1,)
@@ -470,7 +462,6 @@ def _(handler_1):
 
 @app.cell
 def _(config_1):
-    # @output: driving_data_display
     config_1["inputs"]["driving_data"]
     return
 
@@ -495,7 +486,6 @@ def _(mo):
 
 @app.cell
 def _(handler_1, tree):
-    # @output: write_new_config
     import tempfile
 
     config_2 = handler_1.read("./config")
