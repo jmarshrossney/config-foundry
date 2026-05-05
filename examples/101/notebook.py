@@ -12,6 +12,14 @@ __generated_with = "0.23.5"
 app = marimo.App(app_title="Usage")
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md("""
+    # Usage
+    """)
+    return
+
+
 @app.cell
 def _():
     import marimo as mo
@@ -22,8 +30,6 @@ def _():
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # Usage
-
     ## Basic Usage
 
     #### A simple configuration
