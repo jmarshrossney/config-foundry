@@ -75,7 +75,7 @@ def _():
 
     class YamlFileHandler:
         def read(self, path: str | PathLike) -> dict:
-            with open(path, "r") as file:
+            with open(path) as file:
                 contents = yaml.safe_load(file)
             return contents
 
@@ -117,7 +117,7 @@ def _(PathLike):
     class CsvFileHandler:
         def read(self, path: str | PathLike) -> list[list[float]]:
             data = []
-            with open(path, "r") as file:
+            with open(path) as file:
                 reader = csv.reader(file)
                 for row in reader:
                     data.append(row)
@@ -380,7 +380,7 @@ def _(PathLike):
 
     class JsonFileHandler:
         def read(self, path: str | PathLike) -> dict:
-            with open(path, "r") as file:
+            with open(path) as file:
                 contents = json.load(file)
             return contents
 
@@ -459,7 +459,9 @@ def _(mo):
 
 @app.cell
 def _(VariableHandler):
-    lazy_variable_handler = VariableHandler(config={"path": "config.json", "Handler": "json"})
+    lazy_variable_handler = VariableHandler(
+        config={"path": "config.json", "Handler": "json"}
+    )
     print(lazy_variable_handler)
     return
 
@@ -660,7 +662,9 @@ def _(PotentiallyLargeFileHandler, make_metaconfig, tree):
         },
     )
     print(tree("./sizes"))
-    handler_with_large = ConfigHandlerWithLarge(a="small.csv", b="big.csv", c="huge.csv")
+    handler_with_large = ConfigHandlerWithLarge(
+        a="small.csv", b="big.csv", c="huge.csv"
+    )
     config_with_large = handler_with_large.read("./sizes")
     config_with_large
     return

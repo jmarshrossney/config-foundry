@@ -4,7 +4,7 @@ _:
 # Format and lint the package using ruff, and lint the examples using marimo.
 lint:
   ruff format
-  ruff check
+  ruff check --fix
   marimo check examples/101/notebook.py
   marimo check examples/jules/notebook.py
 

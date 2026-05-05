@@ -283,6 +283,7 @@ def _(mo):
 @app.cell
 def _(PathLike, config_foundry):
     from typing import TypedDict
+
     import numpy
 
     @config_foundry.filter(write=lambda path, data, **_: not path.is_absolute())
@@ -295,7 +296,7 @@ def _(PathLike, config_foundry):
         def read(self, path: str | PathLike) -> AsciiData:
             comment_lines = []
             num_lines = 0
-            with open(path, "r") as file:
+            with open(path) as file:
                 for line in file:
                     line = line.strip()
                     if line.startswith(("#", "!")):
@@ -321,9 +322,10 @@ def _(PathLike, config_foundry):
                 fmt="%.5f",
                 header=data["comment"],
                 comments="#",
-            ) 
-            # NOTE: Unfortunately numpy.loadtxt/savetxt does not correctly round-trip  
+            )
+            # NOTE: Unfortunately numpy.loadtxt/savetxt does not correctly round-trip
             # single-row data. We need to catch it here and add an extra dimension.
+
     return (AsciiFileHandler,)
 
 
