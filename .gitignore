@@ -7,4 +7,4 @@ site/
 docs/101.md
 docs/jules.md
 docs/*-notebook.html
-examples/__marimo__/
+__marimo__/

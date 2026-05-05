@@ -12,9 +12,11 @@ repo_url = "https://github.com/jmarshrossney/config-foundry"
 
 nav = [
   { "Home" = "index.md" },
-  { "API Reference" = "api.md" },
   { "Usage" = "101.md" },
-  { "JULES land surface model" = "jules.md" },
+  { "API Reference" = "api.md" },
+  { "Examples" = [
+    { "JULES land surface model" = "jules.md" },
+  ]}
 ]
 
 extra_javascript = [
