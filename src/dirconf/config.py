@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
-class ConfigSchema:
+class DirConfig:
     """A base dataclass representing a collection of configuration files.
 
-    This either be subclassed explicitly, i.e. via `class MyConfig(ConfigSchema): ...`,
-    or through the [`make_config_schema`][dirconf.config.make_config_schema]
+    This either be subclassed explicitly, i.e. via `class MyConfig(DirConfig): ...`,
+    or through the [`make_dirconfig`][dirconf.config.make_dirconfig]
     function.
     All fields are expected to be instances of [`Node`][dirconf.node.Node].
     """
@@ -48,7 +48,7 @@ class ConfigSchema:
 
         Returns:
           config: The read configuration as a Python `dict`. The keys of the
-            dictionary will be the field names of the `ConfigSchema` subclass.
+            dictionary will be the field names of the `DirConfig` subclass.
         """
         data = {}
 
@@ -69,7 +69,7 @@ class ConfigSchema:
         Arguments:
           path: A path to a directory where the configuration will be written.
             The directory need not yet exist.
-          data: A `dict` whose keys match the field names for this `ConfigSchema`,
+          data: A `dict` whose keys match the field names for this `DirConfig`,
             and whose values contain the data to be written.
           overwrite_ok: A flag indicating whether overwriting existing files is
             acceptable. Nothing is done with this argument other than to pass it
@@ -93,8 +93,8 @@ class ConfigSchema:
         """An iterator over all nodes (fields) in the configuration.
 
         Arguments:
-          recurse: In cases where one or more of the nodes of the `ConfigSchema`
-            is a directory whose `Handler` is itself instance of `ConfigSchema`,
+          recurse: In cases where one or more of the nodes of the `DirConfig`
+            is a directory whose `Handler` is itself instance of `DirConfig`,
             passing `recurse=True` will also yield the nodes from these children.
 
         Yields:
@@ -106,7 +106,7 @@ class ConfigSchema:
 
             yield node
 
-            if recurse and isinstance(handler := node.handler(), ConfigSchema):
+            if recurse and isinstance(handler := node.handler(), DirConfig):
                 yield from handler.nodes()
 
     def _tree(
@@ -137,7 +137,7 @@ class ConfigSchema:
 
             yield prefix + pointer + field.name + separator + node_repr
 
-            if depth < (max_depth or depth + 1) and isinstance(handler, ConfigSchema):
+            if depth < (max_depth or depth + 1) and isinstance(handler, DirConfig):
                 extension = pipe if pointer == tee else blank
 
                 yield from handler._tree(
@@ -167,7 +167,7 @@ class ConfigSchema:
         return f"{type(self).__module__}.{type(self).__name__}\n{self.tree()}"
 
 
-def _make_config_schema(cls_name: str, config: dict, **kwargs) -> type[ConfigSchema]:
+def _make_dirconfig(cls_name: str, config: dict, **kwargs) -> type[DirConfig]:
     fields = []
     for name, spec in config.items():
         path = spec.get("path", False)
@@ -210,7 +210,7 @@ def _make_config_schema(cls_name: str, config: dict, **kwargs) -> type[ConfigSch
     return dataclasses.make_dataclass(
         cls_name=cls_name,
         fields=fields,
-        bases=(ConfigSchema,),
+        bases=(DirConfig,),
         **kwargs,
     )
 
@@ -231,14 +231,14 @@ def _str_is_path(s: str) -> bool:
         return False
 
 
-def make_config_schema(
+def make_dirconfig(
     cls_name: str, spec: dict | str | PathLike, **kwargs: Any
-) -> type[ConfigSchema]:
-    """A function that generates subclasses of `ConfigSchema`.
+) -> type[DirConfig]:
+    """A function that generates subclasses of `DirConfig`.
 
     This is a wrapper around
     [`dataclasses.make_dataclass`](https://docs.python.org/3/library/dataclasses.html#dataclasses.make_dataclass)
-    that sets the base class to [dirconf.config.ConfigSchema][] and constructs
+    that sets the base class to [dirconf.config.DirConfig][] and constructs
     fields using the provided `spec`.
 
     Arguments:
@@ -247,17 +247,17 @@ def make_config_schema(
       kwargs: Additional arguments to pass to `make_dataclass`.
 
     Returns:
-      ConfigSchemaSubclass: The resulting subclass of `ConfigSchema`.
+      DirConfigSubclass: The resulting subclass of `DirConfig`.
     """
     if isinstance(spec, dict):
-        return _make_config_schema(cls_name, spec, **kwargs)
+        return _make_dirconfig(cls_name, spec, **kwargs)
 
     if isinstance(spec, str) and _str_is_json(spec):
-        return _make_config_schema(cls_name, json.loads(spec), **kwargs)
+        return _make_dirconfig(cls_name, json.loads(spec), **kwargs)
 
     if isinstance(spec, PathLike) or (isinstance(spec, str) and _str_is_path(spec)):
         with open(spec) as file:
             loaded_spec = json.load(file)
-        return _make_config_schema(cls_name, loaded_spec, **kwargs)
+        return _make_dirconfig(cls_name, loaded_spec, **kwargs)
 
     raise TypeError(f"Unsupported type: {type(spec)}")

@@ -165,7 +165,7 @@ def _(mo):
     mo.md(r"""
     ### Namelists directory config
 
-    We now construct a `ConfigSchema`-based Handler for a namelists directory, in which each `Node` corresponds to a single `.nml` file with a fixed path and handler.
+    We now construct a `DirConfig`-based Handler for a namelists directory, in which each `Node` corresponds to a single `.nml` file with a fixed path and handler.
     """)
     return
 
@@ -204,7 +204,7 @@ def _(NamelistFileHandler, dirconf):
         "urban",
     ]
 
-    NamelistDirectoryHandler = dirconf.make_config_schema(
+    NamelistDirectoryHandler = dirconf.make_dirconfig(
         cls_name="NamelistDirectoryHandler",
         spec={
             name: {"path": f"{name}.nml", "handler": NamelistFileHandler}
@@ -217,7 +217,7 @@ def _(NamelistFileHandler, dirconf):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    This produces a subclass of `ConfigSchema` which is instantiated without any arguments.
+    This produces a subclass of `DirConfig` which is instantiated without any arguments.
     """)
     return
 
@@ -414,7 +414,7 @@ def _(AsciiFileHandler, NetcdfFileHandler, dirconf):
 
 @app.cell
 def _(AsciiFileHandler, dirconf):
-    InputFilesConfig = dirconf.make_config_schema(
+    InputFilesConfig = dirconf.make_dirconfig(
         cls_name="InputFilesConfig",
         spec={
             "initial_conditions": {
@@ -431,7 +431,7 @@ def _(AsciiFileHandler, dirconf):
 
 @app.cell
 def _(NamelistDirectoryHandler, dirconf):
-    JulesConfigHandler = dirconf.make_config_schema(
+    JulesConfigHandler = dirconf.make_dirconfig(
         cls_name="JulesConfigHandler",
         spec={
             "inputs": {},  # we will fix this upon instantiation
