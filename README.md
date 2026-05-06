@@ -1,4 +1,4 @@
-# Config-Foundry
+# dirconf
 
 [![PyPI version](https://img.shields.io/pypi/v/dirconf)](https://pypi.org/project/dirconf/)
 [![Python versions](https://img.shields.io/pypi/pyversions/dirconf)](https://pypi.org/project/dirconf/)
@@ -45,12 +45,4 @@ Contributions are welcome!
 Please open a Pull Request against the `main` branch.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for full details.
-
-## Why `dirconf`?
-
-A foundry casts objects from moulds.
-Similarly, `dirconf` lets you declare a *mould* — in the form of a dataclass — that describes the shape of a valid configuration directory.
-That mould can then be used to capture configurations from the filesystem or cast new ones from data in Python.
-
-This project was originally called `metaconf` ("configuration of configurations"), but the name was taken on PyPI..
 
