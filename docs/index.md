@@ -18,22 +18,19 @@ I wrote this because I sometimes work with quite old scientific models requiring
 `dirconf` is a Python package and thus can be installed using `pip`, or tools such as `uv` and `poetry` that wrap around `pip`.
 
 
+=== "uv (recommended)"
+
+    ```sh
+    uv add dirconf
+    ```
+
 === "pip"
 
     ```sh
-    pip install git+https://github.com/jmarshrossney/dirconf.git
+    pip install dirconf
     ```
 
-=== "uv"
-
-    ```sh
-    uv add git+https://github.com/jmarshrossney/dirconf.git
-    ```
-
-!!! Note
-    Currently `dirconf` is not in PyPI and must be installed directly from Github.
-
-Currently Python versions equal to or above 3.11 are supported.
+Currently Python versions equal to or above 3.12 are supported.
 It has no dependencies other than the Standard Library.
 
 
@@ -46,18 +43,22 @@ There are two essential steps for adapting `dirconf` to a specific use-case.
 
 The custom `DirConfig` subclass can then be used to
 
-1. **Read** a configuration from the filesystem into a Python `dict` (`DirConfig.read`). 
-2. **Write** a configuration `dict` to the filesystem (`DirConfig.write`)
+1. **Read** a configuration from the filesystem into a Python `dict`. 
+2. **Write** a configuration `dict` to the filesystem.
 
-These steps are most easily understood through examples. To start with, take a look at the [Usage](101.md) section. More realistic examples can be found in the right navigation bar.
+These steps are most easily understood through examples. 
+To start with, take a look at the [Usage](101.md) section. 
+More realistic examples can be found under the 'examples' heading.
 
-All of the examples (including 'Usage') are based on marimo notebooks. You can open them directly in marimo using the button in the sidebar, or inspect the generated markdown on this page.
+All of the examples (including 'Usage') are based on self-contained [marimo](https://marimo.io/) notebooks, which can be browsed and downloaded [here](https://github.com/jmarshrossney/dirconf/tree/main/examples/)
 
 
 ## Philosophy
 
 `dirconf` contains ~700 lines of code (including docstrings) and has no dependencies beyond the Standard Library.
 
-This is by design. I have no intention of developing `dirconf` into a more sophisticated tool than it already is. The aim is that is works seamlessly alongside other tools and packages for parsing and validation, without ever getting in the way or creating conflicts.
+This is by design.
+I have no intention of developing `dirconf` into a more sophisticated tool than it already is.
+The aim is that is works seamlessly alongside other tools and packages for parsing and validation, without ever getting in the way or creating conflicts.
 
 With that out of the way, please feel free to raise an [issue](https://github.com/jmarshrossney/dirconf/issues) or make a [pull request](https://github.com/jmarshrossney/dirconf/pulls) to suggest a change or feature.
