@@ -55,9 +55,9 @@ def _():
     from os import PathLike
     from pathlib import Path
 
-    import config_foundry
+    import dirconf
 
-    return Path, PathLike, config_foundry
+    return Path, PathLike, dirconf
 
 
 @app.cell(hide_code=True)
@@ -126,6 +126,8 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ### Namelist file handler
+
     We will make use of the [`f90nml`](https://f90nml.readthedocs.io/en/latest/) Python package[^3] for reading and writing namelist files.
 
     [^3]: Marshall Ward. (2019). marshallward/f90nml: Version 1.1.2 (v1.1.2). Zenodo. [10.5281/zenodo.3245482](https://doi.org/10.5281/zenodo.3245482)
@@ -135,13 +137,19 @@ def _(mo):
 
 @app.cell
 def _(PathLike):
+    import json
+
     import f90nml
 
     class NamelistFileHandler:
         def read(self, path: str | PathLike) -> dict:
             """Read a Fortran namelist file and return a dict of its contents."""
             data = f90nml.read(path)
-            return data.todict()
+
+            # f90nml converts namelists to OrderedDict by default. However, since Python 3.7
+            # regular dicts guarantee insertion order. We will use json to cast to regular
+            # dict here, purely because they pretty-print whereas OrderedDict doesn't.
+            return json.loads(json.dumps(data.todict()))
 
         def write(
             self, path: str | PathLike, data: dict, *, overwrite_ok: bool = False
@@ -155,13 +163,15 @@ def _(PathLike):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    We now construct a `ConfigSchema`-based Handler for a namelists directory, in which each `Node` corresponds to a single `.nml` file with a fixed path and handler.
+    ### Namelists directory config
+
+    We now construct a `DirConfig`-based Handler for a namelists directory, in which each `Node` corresponds to a single `.nml` file with a fixed path and handler.
     """)
     return
 
 
 @app.cell
-def _(NamelistFileHandler, config_foundry):
+def _(NamelistFileHandler, dirconf):
     _jules_namelists = [
         "ancillaries",
         "crop_params",
@@ -194,60 +204,64 @@ def _(NamelistFileHandler, config_foundry):
         "urban",
     ]
 
-    NamelistDirectoryHandler = config_foundry.make_config_schema(
-        cls_name="NamelistDirectoryHandler",
+    NamelistConfig = dirconf.make_dirconfig(
+        cls_name="NamelistConfig",
         spec={
             name: {"path": f"{name}.nml", "handler": NamelistFileHandler}
             for name in _jules_namelists
         },
     )
-    return (NamelistDirectoryHandler,)
+    return (NamelistConfig,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    This produces a subclass of `ConfigSchema` which is instantiated without any arguments.
+    This produces a subclass of `DirConfig` which is instantiated without any arguments.
     """)
     return
 
 
 @app.cell
-def _(NamelistDirectoryHandler):
-    namelists_handler = NamelistDirectoryHandler()
+def _(NamelistConfig):
+    namelist_config = NamelistConfig()
 
-    print(namelists_handler)
-    return (namelists_handler,)
+    print(namelist_config)
+    return (namelist_config,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ### Dry-run
+
     We can now use this handler to read an entire namelists directory into a Python dict.
+
+    Let's do this now, and check all expected keys are present.
     """)
     return
 
 
 @app.cell
-def _(namelists_handler):
-    namelists_dict = namelists_handler.read("config/namelists")
+def _(namelist_config):
+    namelist_config_dict = namelist_config.read("config/namelists")
 
-    list(namelists_dict.keys())
-    return (namelists_dict,)
-
-
-@app.cell
-def _(namelists_dict):
-    namelists_dict["drive"]
-    return
+    list(namelist_config_dict.keys())
+    return (namelist_config_dict,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    The `drive` namelist shown above controls the meteorological forcing data:
+    The `drive` namelist controls the meteorological forcing data:
     start and end dates, time step, variable names, and the path to the driving data file.
     """)
+    return
+
+
+@app.cell
+def _(namelist_config_dict):
+    namelist_config_dict["drive"]
     return
 
 
@@ -262,7 +276,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### Ascii input data
+    ### Ascii file handler
 
     In addition to namelist files, JULES requires input data such as meteorological forcing
     ("driving") data, initial conditions, and spatial maps like tile fractions. These are
@@ -281,13 +295,13 @@ def _(mo):
 
 
 @app.cell
-def _(PathLike, config_foundry):
+def _(PathLike, dirconf):
     from typing import TypedDict
 
     import numpy
 
-    @config_foundry.filter(write=lambda path, data, **_: not path.is_absolute())
-    @config_foundry.filter_missing()
+    @dirconf.filter(write=lambda path, data, **_: not path.is_absolute())
+    @dirconf.filter_missing()
     class AsciiFileHandler:
         class AsciiData(TypedDict):
             values: numpy.ndarray
@@ -332,7 +346,7 @@ def _(PathLike, config_foundry):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### NetCDF input data
+    ### NetCDF file handler
 
     ASCII files (`.dat`, `.txt`) are simple and human-readable, making them suitable for
     small datasets like initial conditions or tile fraction maps. However, for large
@@ -346,14 +360,14 @@ def _(mo):
 
 
 @app.cell
-def _(Path, PathLike, config_foundry):
+def _(Path, PathLike, dirconf):
     import xarray
 
-    @config_foundry.filter(
+    @dirconf.filter(
         read=lambda path: not path.is_absolute(),
         write=lambda path, data, **_: not path.is_absolute(),
     )
-    @config_foundry.filter_missing()
+    @dirconf.filter_missing()
     class NetcdfFileHandler:
         def read(self, path: str | PathLike) -> xarray.Dataset:
             dataset = xarray.load_dataset(path)
@@ -376,15 +390,15 @@ def _(Path, PathLike, config_foundry):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Putting it together
+    ## Putting it all together
 
     We have now defined handlers for three file types: namelists (via `f90nml`), ASCII data
     (via `numpy`), and NetCDF (via `xarray`). Before composing them into a unified configuration,
-    we register the ASCII and NetCDF handlers with `config_foundry` so they can be selected
+    we register the ASCII and NetCDF handlers with `dirconf` so they can be selected
     automatically by file extension.
 
-    The `@config_foundry.filter` decorator attaches predicates that determine when a handler
-    is applicable (e.g., based on path properties). The `@config_foundry.filter_missing()`
+    The `@dirconf.filter` decorator attaches predicates that determine when a handler
+    is applicable (e.g., based on path properties). The `@dirconf.filter_missing()`
     decorator ensures that missing files are handled gracefully rather than raising an error
     immediately.
     """)
@@ -392,15 +406,15 @@ def _(mo):
 
 
 @app.cell
-def _(AsciiFileHandler, NetcdfFileHandler, config_foundry):
-    config_foundry.register_handler("ascii", AsciiFileHandler, [".txt", ".dat", ".asc"])
-    config_foundry.register_handler("netcdf", NetcdfFileHandler, [".nc", ".cdf"])
+def _(AsciiFileHandler, NetcdfFileHandler, dirconf):
+    dirconf.register_handler("ascii", AsciiFileHandler, [".txt", ".dat", ".asc"])
+    dirconf.register_handler("netcdf", NetcdfFileHandler, [".nc", ".cdf"])
     return
 
 
 @app.cell
-def _(AsciiFileHandler, config_foundry):
-    InputFilesConfig = config_foundry.make_config_schema(
+def _(AsciiFileHandler, dirconf):
+    InputFilesConfig = dirconf.make_dirconfig(
         cls_name="InputFilesConfig",
         spec={
             "initial_conditions": {
@@ -416,21 +430,21 @@ def _(AsciiFileHandler, config_foundry):
 
 
 @app.cell
-def _(NamelistDirectoryHandler, config_foundry):
-    JulesConfigHandler = config_foundry.make_config_schema(
-        cls_name="JulesConfigHandler",
+def _(NamelistConfig, dirconf):
+    JulesConfig = dirconf.make_dirconfig(
+        cls_name="JulesConfig",
         spec={
             "inputs": {},  # we will fix this upon instantiation
-            "namelists": {"handler": NamelistDirectoryHandler},  # fully fixed
+            "namelists": {"handler": NamelistConfig},  # fully fixed
         },
     )
-    return (JulesConfigHandler,)
+    return (JulesConfig,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    With the input file handlers defined, we can now compose the top-level `JulesConfigHandler`.
+    With the input file handlers defined, we can now compose the top-level `JulesConfig`.
     Note that the `inputs` node uses a lambda factory function rather than a direct handler
     instance. This defers instantiation of `InputFilesConfig` until the handler is constructed,
     allowing us to bind specific file paths at that time. The `namelists` node, by contrast,
@@ -449,7 +463,7 @@ def _(mo):
 
 @app.cell
 def _():
-    from config_foundry.utils import tree
+    from dirconf.utils import tree
 
     print(tree("./config"))
     return
@@ -465,9 +479,17 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Reading with ascii
+    """)
+    return
+
+
 @app.cell
-def _(InputFilesConfig, JulesConfigHandler):
-    handler_ascii = JulesConfigHandler(
+def _(InputFilesConfig, JulesConfig):
+    config_ascii = JulesConfig(
         namelists="namelists",
         inputs={
             "path": "inputs",
@@ -479,27 +501,27 @@ def _(InputFilesConfig, JulesConfigHandler):
         },
     )
 
-    print(handler_ascii)
-    return (handler_ascii,)
+    print(config_ascii)
+    return (config_ascii,)
 
 
 @app.cell
-def _(handler_ascii):
-    config_ascii = handler_ascii.read("./config")
+def _(config_ascii):
+    config_dict_ascii = config_ascii.read("./config")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Reading with netcdf
+    ### Reading with netcdf
     """)
     return
 
 
 @app.cell
-def _(InputFilesConfig, JulesConfigHandler):
-    handler_netcdf = JulesConfigHandler(
+def _(InputFilesConfig, JulesConfig):
+    config_netcdf = JulesConfig(
         namelists="namelists",
         inputs={
             "path": "inputs",
@@ -510,14 +532,14 @@ def _(InputFilesConfig, JulesConfigHandler):
             ),
         },
     )
-    print(handler_netcdf)
-    return (handler_netcdf,)
+    print(config_netcdf)
+    return (config_netcdf,)
 
 
 @app.cell
-def _(handler_netcdf):
-    config_netcdf = handler_netcdf.read("./config")
-    return (config_netcdf,)
+def _(config_netcdf):
+    config_dict_netcdf = config_netcdf.read("./config")
+    return (config_dict_netcdf,)
 
 
 @app.cell(hide_code=True)
@@ -537,16 +559,20 @@ def _(mo):
 
 
 @app.cell
-def _(config_netcdf, handler_netcdf):
+def _(config_dict_netcdf, config_netcdf):
     import tempfile
 
     print(
         "current output period: ",
-        config_netcdf["namelists"]["output"]["jules_output_profile"]["output_period"],
+        config_dict_netcdf["namelists"]["output"]["jules_output_profile"][
+            "output_period"
+        ],
     )
-    config_netcdf["namelists"]["output"]["jules_output_profile"]["output_period"] = 3600
+    config_dict_netcdf["namelists"]["output"]["jules_output_profile"][
+        "output_period"
+    ] = 3600
     with tempfile.TemporaryDirectory() as temp_dir:
-        handler_netcdf.write(temp_dir, config_netcdf)
+        config_netcdf.write(temp_dir, config_dict_netcdf)
     return
 
 

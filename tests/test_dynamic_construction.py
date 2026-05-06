@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from config_foundry import make_config_schema, register_handler
+from dirconf import make_dirconfig, register_handler
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -45,23 +45,23 @@ def dict_spec(path_spec) -> dict:
 
 
 def test_dict_spec(dict_spec):
-    _ = make_config_schema("TestConfig", dict_spec)
+    _ = make_dirconfig("TestConfig", dict_spec)
 
 
 def test_str_spec(str_spec):
-    _ = make_config_schema("TestConfig", str_spec)
+    _ = make_dirconfig("TestConfig", str_spec)
 
 
 def test_path_spec(path_spec):
-    _ = make_config_schema("TestConfig", path_spec)
+    _ = make_dirconfig("TestConfig", path_spec)
 
 
 def test_path_spec_as_str(path_spec_as_str):
-    _ = make_config_schema("TestConfig", path_spec_as_str)
+    _ = make_dirconfig("TestConfig", path_spec_as_str)
 
 
 def test_instantiation(dict_spec):
-    class_ = make_config_schema("TestConfig", dict_spec)
+    class_ = make_dirconfig("TestConfig", dict_spec)
     # Test bfile given as path
     _ = class_(
         afile={"path": "afile.txt", "handler": "test_handler"},  # type: ignore[reportCallIssue]

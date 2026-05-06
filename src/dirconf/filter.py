@@ -43,8 +43,8 @@ def filter_read(
     being passed into `test`. If the output of `test(path)` is `True`, the wrapped
     `read` method is called and nothing else is done. If the output is `False`,
     then the read is not attempted and instead a special value,
-    [`MISSING`][config_foundry.filter.MISSING], is returned. In the latter case, a
-    [`MissingWarning`][config_foundry.filter.MissingWarning] is also emitted if
+    [`MISSING`][dirconf.filter.MISSING], is returned. In the latter case, a
+    [`MissingWarning`][dirconf.filter.MissingWarning] is also emitted if
     `warn=True`.
 
     Arguments:
@@ -88,7 +88,7 @@ def filter_write(
     If the output of `test(path, data, **kwargs)` is `True`, the wrapped
     `write` method is called and nothing else is done. If the output is `False`,
     then the write is not attempted and the function simply returns. In the
-    latter case, a [`MissingWarning`][config_foundry.filter.MissingWarning] is also
+    latter case, a [`MissingWarning`][dirconf.filter.MissingWarning] is also
     emitted if `warn=True`.
 
     Arguments:
@@ -130,8 +130,8 @@ def filter(
     """A decorator for classes satisfying the `Handler` protocol.
 
     This provides an alternative to decorating both the `read` method
-    with [`filter_read`][config_foundry.filter.filter_read] and the `write`
-    method with [`filter_write`][config_foundry.filter.filter_write].
+    with [`filter_read`][dirconf.filter.filter_read] and the `write`
+    method with [`filter_write`][dirconf.filter.filter_write].
 
     Arguments:
       read: A test to run when the `read` method is called.
@@ -139,9 +139,9 @@ def filter(
       warn: If `True`, emit a warning when a test fails.
 
     See Also:
-      - [`filter_read`][config_foundry.filter.filter_read]
-      - [`filter_write`][config_foundry.filter.filter_write]
-      - [`filter_missing`][config_foundry.filter.filter_missing]
+      - [`filter_read`][dirconf.filter.filter_read]
+      - [`filter_write`][dirconf.filter.filter_write]
+      - [`filter_missing`][dirconf.filter.filter_missing]
     """
 
     if not (read or write):
@@ -174,7 +174,7 @@ def filter_missing(warn: bool = False) -> Callable[[Any], Any]:
     """Filter out non-existent paths from `read` and `MISSING` data from `write.
 
     This is implemented purely for convenience, since it simply calls
-    [`filter`][config_foundry.filter.filter] with two specific test functions.
+    [`filter`][dirconf.filter.filter] with two specific test functions.
 
     ```python
     return filter(

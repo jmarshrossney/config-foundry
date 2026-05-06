@@ -125,65 +125,6 @@ wheels = [
 ]
 
 [[package]]
-name = "config-foundry"
-version = "0.4.2"
-source = { editable = "." }
-
-[package.dev-dependencies]
-dev = [
-    { name = "coverage" },
-    { name = "marimo" },
-    { name = "marimo-md-export" },
-    { name = "mkdocstrings", extra = ["python"] },
-    { name = "pre-commit" },
-    { name = "pyright" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "ruff" },
-    { name = "rust-just" },
-    { name = "zensical" },
-]
-docs = [
-    { name = "marimo" },
-    { name = "marimo-md-export" },
-    { name = "mkdocstrings", extra = ["python"] },
-    { name = "zensical" },
-]
-test = [
-    { name = "coverage" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-]
-
-[package.metadata]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "coverage", specifier = ">=7.13.5" },
-    { name = "marimo", specifier = ">=0.23.3" },
-    { name = "marimo-md-export", specifier = ">=0.4.3" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
-    { name = "pre-commit", specifier = ">=4.2.0" },
-    { name = "pyright", specifier = ">=1.1.402" },
-    { name = "pytest", specifier = ">=8.4.1" },
-    { name = "pytest-cov", specifier = ">=7.1.0" },
-    { name = "ruff", specifier = ">=0.12.3" },
-    { name = "rust-just", specifier = ">=1.50.0" },
-    { name = "zensical", specifier = ">=0.0.39" },
-]
-docs = [
-    { name = "marimo", specifier = ">=0.23.3" },
-    { name = "marimo-md-export", specifier = ">=0.4.3" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
-    { name = "zensical", specifier = ">=0.0.39" },
-]
-test = [
-    { name = "coverage", specifier = ">=7.13.5" },
-    { name = "pytest", specifier = ">=8.4.1" },
-    { name = "pytest-cov", specifier = ">=7.1.0" },
-]
-
-[[package]]
 name = "coverage"
 version = "7.13.5"
 source = { registry = "https://pypi.org/simple" }
@@ -274,6 +215,65 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a8/3a/b0ba594708f1ad0bc735884b3ad854d3ca3bdc1d741e56e40bbda6263499/deepmerge-2.0.tar.gz", hash = "sha256:5c3d86081fbebd04dd5de03626a0607b809a98fb6ccba5770b62466fe940ff20", size = 19890, upload-time = "2024-08-30T05:31:50.308Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2d/82/e5d2c1c67d19841e9edc74954c827444ae826978499bde3dfc1d007c8c11/deepmerge-2.0-py3-none-any.whl", hash = "sha256:6de9ce507115cff0bed95ff0ce9ecc31088ef50cbdf09bc90a09349a318b3d00", size = 13475, upload-time = "2024-08-30T05:31:48.659Z" },
+]
+
+[[package]]
+name = "dirconf"
+version = "0.5.0"
+source = { editable = "." }
+
+[package.dev-dependencies]
+dev = [
+    { name = "coverage" },
+    { name = "marimo" },
+    { name = "marimo-md-export" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "pre-commit" },
+    { name = "pyright" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "ruff" },
+    { name = "rust-just" },
+    { name = "zensical" },
+]
+docs = [
+    { name = "marimo" },
+    { name = "marimo-md-export" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "zensical" },
+]
+test = [
+    { name = "coverage" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "coverage", specifier = ">=7.13.5" },
+    { name = "marimo", specifier = ">=0.23.3" },
+    { name = "marimo-md-export", specifier = ">=0.4.3" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
+    { name = "pre-commit", specifier = ">=4.2.0" },
+    { name = "pyright", specifier = ">=1.1.402" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-cov", specifier = ">=7.1.0" },
+    { name = "ruff", specifier = ">=0.12.3" },
+    { name = "rust-just", specifier = ">=1.50.0" },
+    { name = "zensical", specifier = ">=0.0.39" },
+]
+docs = [
+    { name = "marimo", specifier = ">=0.23.3" },
+    { name = "marimo-md-export", specifier = ">=0.4.3" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.30.0" },
+    { name = "zensical", specifier = ">=0.0.39" },
+]
+test = [
+    { name = "coverage", specifier = ">=7.13.5" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "pytest-cov", specifier = ">=7.1.0" },
 ]
 
 [[package]]
@@ -570,7 +570,7 @@ wheels = [
 
 [[package]]
 name = "marimo-md-export"
-version = "0.4.3"
+version = "0.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -578,9 +578,9 @@ dependencies = [
     { name = "marimo" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1f/0e/64cc1a448e156d8cdba5ab4d6b98e690047f58bd59075d652414a8717048/marimo_md_export-0.4.3.tar.gz", hash = "sha256:e5cb973d13352d9c1135435839a1b348f68e74b24fe6255bd26a7237f23bbc69", size = 11604, upload-time = "2026-05-05T13:31:48.368Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e1/0a/404380e5474b69cd665a0eba92e49374a87d3dd1aed5d658e72fe66e56af/marimo_md_export-0.5.0.tar.gz", hash = "sha256:fd12210c9fa41067abb903b650119996492f90c287cb994068e89320d0bd754c", size = 11575, upload-time = "2026-05-05T18:39:48.944Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/bc/43/12c73586e4d88841ab7ab0629c057ad0fd35e4f5b447dd4c9fd575e8dc13/marimo_md_export-0.4.3-py3-none-any.whl", hash = "sha256:2c4b963918c12687a95276e69eacf3e712880a3b71db670a7f6b8e5a074f5889", size = 14793, upload-time = "2026-05-05T13:31:47.482Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/3c/425e6ce0cf6ec3eda95f1f22498e2be7271bd973312da6aef8222c01637d/marimo_md_export-0.5.0-py3-none-any.whl", hash = "sha256:037fcda1a6d964337d5a301c62910f4958a5a4e22b8b140b9758c7a2947fd8b4", size = 14855, upload-time = "2026-05-05T18:39:49.71Z" },
 ]
 
 [[package]]

@@ -59,7 +59,7 @@ def tree(path: str | os.PathLike) -> str:
     Constructs a tree-like representation of a directory.
 
     This is primarily for sanity-checking by comparing the output of
-    [`ConfigSchema.tree`][config_foundry.config.ConfigSchema.tree] with an actual
+    [`DirConfig.tree`][dirconf.config.DirConfig.tree] with an actual
     directory.
 
     Note:

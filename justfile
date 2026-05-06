@@ -1,5 +1,5 @@
 _:
-  @just --list
+  @just lint typecheck test docs
 
 # Format and lint the package using ruff, and lint the examples using marimo.
 lint:
@@ -21,7 +21,7 @@ test:
 
 # Run tests with coverage report (requires pytest-cov).
 test-cov:
-  pytest --cov=config_foundry --cov-report=term-missing --cov-fail-under=90
+  pytest --cov=dirconf --cov-report=term-missing --cov-fail-under=90
 
 # Run static type checker.
 typecheck:
@@ -30,5 +30,5 @@ typecheck:
 # Build the documentation.
 docs:
   cd examples/101/ && marimo-md-export notebook.py ../../docs/101.md --sandbox
-  cd examples/jules/ && marimo-md-export notebook.py ../../docs/jules.md --sandbox
+  cd examples/jules/ && marimo-md-export notebook.py ../../docs/jules.md --sandbox --overflow scroll
   zensical build
