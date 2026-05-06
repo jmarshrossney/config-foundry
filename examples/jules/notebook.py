@@ -126,6 +126,8 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ### Namelist file handler
+
     We will make use of the [`f90nml`](https://f90nml.readthedocs.io/en/latest/) Python package[^3] for reading and writing namelist files.
 
     [^3]: Marshall Ward. (2019). marshallward/f90nml: Version 1.1.2 (v1.1.2). Zenodo. [10.5281/zenodo.3245482](https://doi.org/10.5281/zenodo.3245482)
@@ -135,13 +137,19 @@ def _(mo):
 
 @app.cell
 def _(PathLike):
+    import json
+
     import f90nml
 
     class NamelistFileHandler:
         def read(self, path: str | PathLike) -> dict:
             """Read a Fortran namelist file and return a dict of its contents."""
             data = f90nml.read(path)
-            return data.todict()
+
+            # f90nml converts namelists to OrderedDict by default. However, since Python 3.7
+            # regular dicts guarantee insertion order. We will use json to cast to regular
+            # dict here, purely because they pretty-print whereas OrderedDict doesn't.
+            return json.loads(json.dumps(data.todict()))
 
         def write(
             self, path: str | PathLike, data: dict, *, overwrite_ok: bool = False
@@ -155,6 +163,8 @@ def _(PathLike):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ### Namelists directory config
+
     We now construct a `ConfigSchema`-based Handler for a namelists directory, in which each `Node` corresponds to a single `.nml` file with a fixed path and handler.
     """)
     return
@@ -223,7 +233,11 @@ def _(NamelistDirectoryHandler):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    ### Dry-run
+
     We can now use this handler to read an entire namelists directory into a Python dict.
+
+    Let's do this now, and check all expected keys are present.
     """)
     return
 
@@ -236,18 +250,18 @@ def _(namelists_handler):
     return (namelists_dict,)
 
 
-@app.cell
-def _(namelists_dict):
-    namelists_dict["drive"]
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    The `drive` namelist shown above controls the meteorological forcing data:
+    The `drive` namelist controls the meteorological forcing data:
     start and end dates, time step, variable names, and the path to the driving data file.
     """)
+    return
+
+
+@app.cell
+def _(namelists_dict):
+    namelists_dict["drive"]
     return
 
 
@@ -262,7 +276,7 @@ def _(mo):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### Ascii input data
+    ### Ascii file handler
 
     In addition to namelist files, JULES requires input data such as meteorological forcing
     ("driving") data, initial conditions, and spatial maps like tile fractions. These are
@@ -332,7 +346,7 @@ def _(PathLike, dirconf):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ### NetCDF input data
+    ### NetCDF file handler
 
     ASCII files (`.dat`, `.txt`) are simple and human-readable, making them suitable for
     small datasets like initial conditions or tile fraction maps. However, for large
@@ -376,7 +390,7 @@ def _(Path, PathLike, dirconf):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Putting it together
+    ## Putting it all together
 
     We have now defined handlers for three file types: namelists (via `f90nml`), ASCII data
     (via `numpy`), and NetCDF (via `xarray`). Before composing them into a unified configuration,
@@ -465,6 +479,14 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Reading with ascii
+    """)
+    return
+
+
 @app.cell
 def _(InputFilesConfig, JulesConfigHandler):
     handler_ascii = JulesConfigHandler(
@@ -492,7 +514,7 @@ def _(handler_ascii):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Reading with netcdf
+    ### Reading with netcdf
     """)
     return
 
