@@ -1,10 +1,10 @@
 # Home
 
-`config-foundry` is a simple tool for the meta-configuration of collections of configuration files, leaning heavily on Python [dataclasses](https://docs.python.org/3/library/dataclasses.html).
+`dirconf` is a simple tool for the meta-configuration of collections of configuration files, leaning heavily on Python [dataclasses](https://docs.python.org/3/library/dataclasses.html).
 
 I wrote this because I sometimes work with quite old scientific models requiring various configuration files and data inputs in various formats to be present in various locations. I was (and remain) concerned about how easy it can be to misconfigure certain models without realising, and how common workflows compromise reproducibility.
 
-`config-foundry` helps by
+`dirconf` helps by
 
 1. Allowing the user to describe the structure of a directory representing a valid configuration, and validate real directories against this description.
 
@@ -15,23 +15,23 @@ I wrote this because I sometimes work with quite old scientific models requiring
 
 ## Installation
 
-`config-foundry` is a Python package and thus can be installed using `pip`, or tools such as `uv` and `poetry` that wrap around `pip`.
+`dirconf` is a Python package and thus can be installed using `pip`, or tools such as `uv` and `poetry` that wrap around `pip`.
 
 
 === "pip"
 
     ```sh
-    pip install git+https://github.com/jmarshrossney/config-foundry.git
+    pip install git+https://github.com/jmarshrossney/dirconf.git
     ```
 
 === "uv"
 
     ```sh
-    uv add git+https://github.com/jmarshrossney/config-foundry.git
+    uv add git+https://github.com/jmarshrossney/dirconf.git
     ```
 
 !!! Note
-    Currently `config-foundry` is not in PyPI and must be installed directly from Github.
+    Currently `dirconf` is not in PyPI and must be installed directly from Github.
 
 Currently Python versions equal to or above 3.11 are supported.
 It has no dependencies other than the Standard Library.
@@ -39,7 +39,7 @@ It has no dependencies other than the Standard Library.
 
 ## Overview of usage
 
-There are two essential steps for adapting `config-foundry` to a specific use-case.
+There are two essential steps for adapting `dirconf` to a specific use-case.
 
 1. **Define handlers** satisfying the `Handler` protocol for each of the paths (files and directories) present in your configuration.
 2. **Define the structure of a valid configuration** in terms of its paths and their respective handlers, by subclassing the `ConfigSchema` class. This is most easily done using the `make_config_schema` function.
@@ -56,8 +56,8 @@ All of the examples (including 'Usage') are based on marimo notebooks. You can o
 
 ## Philosophy
 
-`config-foundry` contains ~700 lines of code (including docstrings) and has no dependencies beyond the Standard Library.
+`dirconf` contains ~700 lines of code (including docstrings) and has no dependencies beyond the Standard Library.
 
-This is by design. I have no intention of developing `config-foundry` into a more sophisticated tool than it already is. The aim is that is works seamlessly alongside other tools and packages for parsing and validation, without ever getting in the way or creating conflicts.
+This is by design. I have no intention of developing `dirconf` into a more sophisticated tool than it already is. The aim is that is works seamlessly alongside other tools and packages for parsing and validation, without ever getting in the way or creating conflicts.
 
-With that out of the way, please feel free to raise an [issue](https://github.com/jmarshrossney/config-foundry/issues) or make a [pull request](https://github.com/jmarshrossney/config-foundry/pulls) to suggest a change or feature.
+With that out of the way, please feel free to raise an [issue](https://github.com/jmarshrossney/dirconf/issues) or make a [pull request](https://github.com/jmarshrossney/dirconf/pulls) to suggest a change or feature.

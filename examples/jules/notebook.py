@@ -55,9 +55,9 @@ def _():
     from os import PathLike
     from pathlib import Path
 
-    import config_foundry
+    import dirconf
 
-    return Path, PathLike, config_foundry
+    return Path, PathLike, dirconf
 
 
 @app.cell(hide_code=True)
@@ -161,7 +161,7 @@ def _(mo):
 
 
 @app.cell
-def _(NamelistFileHandler, config_foundry):
+def _(NamelistFileHandler, dirconf):
     _jules_namelists = [
         "ancillaries",
         "crop_params",
@@ -194,7 +194,7 @@ def _(NamelistFileHandler, config_foundry):
         "urban",
     ]
 
-    NamelistDirectoryHandler = config_foundry.make_config_schema(
+    NamelistDirectoryHandler = dirconf.make_config_schema(
         cls_name="NamelistDirectoryHandler",
         spec={
             name: {"path": f"{name}.nml", "handler": NamelistFileHandler}
@@ -281,13 +281,13 @@ def _(mo):
 
 
 @app.cell
-def _(PathLike, config_foundry):
+def _(PathLike, dirconf):
     from typing import TypedDict
 
     import numpy
 
-    @config_foundry.filter(write=lambda path, data, **_: not path.is_absolute())
-    @config_foundry.filter_missing()
+    @dirconf.filter(write=lambda path, data, **_: not path.is_absolute())
+    @dirconf.filter_missing()
     class AsciiFileHandler:
         class AsciiData(TypedDict):
             values: numpy.ndarray
@@ -346,14 +346,14 @@ def _(mo):
 
 
 @app.cell
-def _(Path, PathLike, config_foundry):
+def _(Path, PathLike, dirconf):
     import xarray
 
-    @config_foundry.filter(
+    @dirconf.filter(
         read=lambda path: not path.is_absolute(),
         write=lambda path, data, **_: not path.is_absolute(),
     )
-    @config_foundry.filter_missing()
+    @dirconf.filter_missing()
     class NetcdfFileHandler:
         def read(self, path: str | PathLike) -> xarray.Dataset:
             dataset = xarray.load_dataset(path)
@@ -380,11 +380,11 @@ def _(mo):
 
     We have now defined handlers for three file types: namelists (via `f90nml`), ASCII data
     (via `numpy`), and NetCDF (via `xarray`). Before composing them into a unified configuration,
-    we register the ASCII and NetCDF handlers with `config_foundry` so they can be selected
+    we register the ASCII and NetCDF handlers with `dirconf` so they can be selected
     automatically by file extension.
 
-    The `@config_foundry.filter` decorator attaches predicates that determine when a handler
-    is applicable (e.g., based on path properties). The `@config_foundry.filter_missing()`
+    The `@dirconf.filter` decorator attaches predicates that determine when a handler
+    is applicable (e.g., based on path properties). The `@dirconf.filter_missing()`
     decorator ensures that missing files are handled gracefully rather than raising an error
     immediately.
     """)
@@ -392,15 +392,15 @@ def _(mo):
 
 
 @app.cell
-def _(AsciiFileHandler, NetcdfFileHandler, config_foundry):
-    config_foundry.register_handler("ascii", AsciiFileHandler, [".txt", ".dat", ".asc"])
-    config_foundry.register_handler("netcdf", NetcdfFileHandler, [".nc", ".cdf"])
+def _(AsciiFileHandler, NetcdfFileHandler, dirconf):
+    dirconf.register_handler("ascii", AsciiFileHandler, [".txt", ".dat", ".asc"])
+    dirconf.register_handler("netcdf", NetcdfFileHandler, [".nc", ".cdf"])
     return
 
 
 @app.cell
-def _(AsciiFileHandler, config_foundry):
-    InputFilesConfig = config_foundry.make_config_schema(
+def _(AsciiFileHandler, dirconf):
+    InputFilesConfig = dirconf.make_config_schema(
         cls_name="InputFilesConfig",
         spec={
             "initial_conditions": {
@@ -416,8 +416,8 @@ def _(AsciiFileHandler, config_foundry):
 
 
 @app.cell
-def _(NamelistDirectoryHandler, config_foundry):
-    JulesConfigHandler = config_foundry.make_config_schema(
+def _(NamelistDirectoryHandler, dirconf):
+    JulesConfigHandler = dirconf.make_config_schema(
         cls_name="JulesConfigHandler",
         spec={
             "inputs": {},  # we will fix this upon instantiation
@@ -449,7 +449,7 @@ def _(mo):
 
 @app.cell
 def _():
-    from config_foundry.utils import tree
+    from dirconf.utils import tree
 
     print(tree("./config"))
     return

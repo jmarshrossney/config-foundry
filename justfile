@@ -21,7 +21,7 @@ test:
 
 # Run tests with coverage report (requires pytest-cov).
 test-cov:
-  pytest --cov=config_foundry --cov-report=term-missing --cov-fail-under=90
+  pytest --cov=dirconf --cov-report=term-missing --cov-fail-under=90
 
 # Run static type checker.
 typecheck:

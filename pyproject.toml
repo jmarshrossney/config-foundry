@@ -3,7 +3,7 @@ requires = ["uv_build>=0.8.10,<0.9.0"]
 build-backend = "uv_build"
 
 [project]
-name = "config-foundry"
+name = "dirconf"
 version = "0.4.2"
 description = "Simple meta-configuration of configuration files using Python dataclasses."
 authors = [
@@ -25,9 +25,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://jmarshrossney.github.io/config-foundry"
-Repository = "https://github.com/jmarshrossney/config-foundry"
-Documentation = "https://jmarshrossney.github.io/config-foundry"
+Homepage = "https://jmarshrossney.github.io/dirconf"
+Repository = "https://github.com/jmarshrossney/dirconf"
+Documentation = "https://jmarshrossney.github.io/dirconf"
 
 [dependency-groups]
 dev = [

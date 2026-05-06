@@ -17,9 +17,9 @@ class ConfigSchema:
     """A base dataclass representing a collection of configuration files.
 
     This either be subclassed explicitly, i.e. via `class MyConfig(ConfigSchema): ...`,
-    or through the [`make_config_schema`][config_foundry.config.make_config_schema]
+    or through the [`make_config_schema`][dirconf.config.make_config_schema]
     function.
-    All fields are expected to be instances of [`Node`][config_foundry.node.Node].
+    All fields are expected to be instances of [`Node`][dirconf.node.Node].
     """
 
     def __post_init__(self) -> None:
@@ -73,7 +73,7 @@ class ConfigSchema:
             and whose values contain the data to be written.
           overwrite_ok: A flag indicating whether overwriting existing files is
             acceptable. Nothing is done with this argument other than to pass it
-            to the [`write`][config_foundry.handler.Handler.write] method for all of the
+            to the [`write`][dirconf.handler.Handler.write] method for all of the
             handlers.
         """
         path = Path(path)
@@ -98,7 +98,7 @@ class ConfigSchema:
             passing `recurse=True` will also yield the nodes from these children.
 
         Yields:
-          nodes: Instances of [`Node`][config_foundry.node.Node] corresponding to the
+          nodes: Instances of [`Node`][dirconf.node.Node] corresponding to the
             files and directories in the configuration.
         """
         for field in dataclasses.fields(self):
@@ -238,7 +238,7 @@ def make_config_schema(
 
     This is a wrapper around
     [`dataclasses.make_dataclass`](https://docs.python.org/3/library/dataclasses.html#dataclasses.make_dataclass)
-    that sets the base class to [config_foundry.config.ConfigSchema][] and constructs
+    that sets the base class to [dirconf.config.ConfigSchema][] and constructs
     fields using the provided `spec`.
 
     Arguments:

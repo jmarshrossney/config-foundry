@@ -14,7 +14,7 @@ class Node:
     path: str | PathLike
     """A path corresponding to a file or directory."""
     handler: HandlerFactory
-    """A [`HandlerFactory`][config_foundry.handler.HandlerFactory] that produces valid
+    """A [`HandlerFactory`][dirconf.handler.HandlerFactory] that produces valid
        handlers with `read` and `write` methods for the file or directory."""
 
     def __post_init__(self) -> None:
@@ -27,7 +27,7 @@ class Node:
             warnings.warn(
                 "Absolute paths are not recommended and may not be "
                 "supported in future "
-                "(https://github.com/jmarshrossney/config_foundry/issues/13). "
+                "(https://github.com/jmarshrossney/dirconf/issues/13). "
                 "Did you mean to do this?",
                 stacklevel=2,
             )
@@ -39,7 +39,7 @@ class Node:
 
 
 def dict_to_node(path_and_handler: dict) -> Node:
-    """Converts a valid dict to a [`Node`][config_foundry.node.Node]."""
+    """Converts a valid dict to a [`Node`][dirconf.node.Node]."""
     return Node(**path_and_handler)
 
 

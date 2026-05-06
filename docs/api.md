@@ -1,20 +1,20 @@
 # API Reference
 
-::: config_foundry.config
+::: dirconf.config
 
 ---
 
-::: config_foundry.filter
+::: dirconf.filter
 
 ---
 
-::: config_foundry.handler
+::: dirconf.handler
 
 ---
 
-::: config_foundry.node
+::: dirconf.node
 
 ---
 
-::: config_foundry.utils
+::: dirconf.utils
 

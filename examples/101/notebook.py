@@ -34,7 +34,7 @@ def _(mo):
 
     #### A simple configuration
 
-    We will demonstrate basic usage of `config-foundry` using a simple configuration containing a [YAML](https://en.wikipedia.org/wiki/YAML) file called `config.yml` and a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file called `data.csv`.
+    We will demonstrate basic usage of `dirconf` using a simple configuration containing a [YAML](https://en.wikipedia.org/wiki/YAML) file called `config.yml` and a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file called `data.csv`.
 
     A concrete instance of this configuration already exists in the `./basic` directory.
     """)
@@ -43,7 +43,7 @@ def _(mo):
 
 @app.cell
 def _():
-    from config_foundry.utils import tree
+    from dirconf.utils import tree
 
     print(tree("./basic"))
     return (tree,)
@@ -158,7 +158,7 @@ def _(mo):
 
 @app.cell
 def _(CsvFileHandler, YamlFileHandler):
-    from config_foundry import make_config_schema
+    from dirconf import make_config_schema
 
     ConfigHandler = make_config_schema(
         cls_name="ConfigHandler",
@@ -442,7 +442,7 @@ def _(mo):
 
 @app.cell
 def _(JsonFileHandler, YamlFileHandler):
-    from config_foundry import register_handler
+    from dirconf import register_handler
 
     register_handler("yaml", YamlFileHandler, extensions=[".yml", ".yaml"])
     register_handler("json", JsonFileHandler, extensions=[".json"])
@@ -518,7 +518,7 @@ def _(mo):
 
 @app.cell
 def _(PathLike):
-    from config_foundry.filter import filter_missing
+    from dirconf.filter import filter_missing
 
     @filter_missing(warn=True)
     class DummyHandler:
@@ -624,7 +624,7 @@ def _(mo):
 
 @app.cell
 def _(CsvFileHandler, PathLike, filter_missing):
-    from config_foundry.filter import filter_read
+    from dirconf.filter import filter_read
 
     @filter_missing()
     class PotentiallyLargeFileHandler(CsvFileHandler):
@@ -680,7 +680,7 @@ def _(mo):
 
 @app.cell
 def _(CsvFileHandler, YamlFileHandler, make_config_schema):
-    from config_foundry.filter import filter
+    from dirconf.filter import filter
 
     @filter(
         read=lambda path: not path.is_absolute(),

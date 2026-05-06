@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from config_foundry.filter import (
+from dirconf.filter import (
     MISSING,
     MissingWarning,
     filter,

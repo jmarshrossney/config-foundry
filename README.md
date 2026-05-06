@@ -1,17 +1,17 @@
 # Config-Foundry
 
-[![PyPI version](https://img.shields.io/pypi/v/config-foundry)](https://pypi.org/project/config-foundry/)
-[![Python versions](https://img.shields.io/pypi/pyversions/config-foundry)](https://pypi.org/project/config-foundry/)
-[![License](https://img.shields.io/pypi/l/config-foundry)](https://github.com/jmarshrossney/config-foundry/blob/main/LICENSE)
-[![CI](https://github.com/jmarshrossney/config-foundry/actions/workflows/ci.yml/badge.svg)](https://github.com/jmarshrossney/config-foundry/actions/workflows/ci.yml)
-[![Docs](https://github.com/jmarshrossney/config-foundry/actions/workflows/docs.yml/badge.svg)](https://jmarshrossney.github.io/config-foundry)
+[![PyPI version](https://img.shields.io/pypi/v/dirconf)](https://pypi.org/project/dirconf/)
+[![Python versions](https://img.shields.io/pypi/pyversions/dirconf)](https://pypi.org/project/dirconf/)
+[![License](https://img.shields.io/pypi/l/dirconf)](https://github.com/jmarshrossney/dirconf/blob/main/LICENSE)
+[![CI](https://github.com/jmarshrossney/dirconf/actions/workflows/ci.yml/badge.svg)](https://github.com/jmarshrossney/dirconf/actions/workflows/ci.yml)
+[![Docs](https://github.com/jmarshrossney/dirconf/actions/workflows/docs.yml/badge.svg)](https://jmarshrossney.github.io/dirconf)
 
-`config-foundry` is a Python tool for declaratively specifying what a valid configuration directory looks like.
+`dirconf` is a Python tool for declaratively specifying what a valid configuration directory looks like.
 
 I wrote this because I sometimes have to work with quite old scientific models that require various configuration files and data inputs in various formats to be present in various locations.
 I was (and remain) concerned about how easy it can be to misconfigure certain models without realising, and how common workflows compromise reproducibility.
 
-`config-foundry` helps by
+`dirconf` helps by
 
 1. Allowing the user to describe the structure of a directory representing a valid configuration, and validate real directories against this description.
 
@@ -19,20 +19,20 @@ I was (and remain) concerned about how easy it can be to misconfigure certain mo
 
 3. Providing a consistent mechanism through which complex, distributed configurations in legacy formats can be validated using excellent tools such as [JSON Schema](https://json-schema.org/) and [Pydantic](https://docs.pydantic.dev/).
 
-Configurations are specified using Python [dataclasses](https://docs.python.org/3/library/dataclasses.html); `config-foundry` has no dependencies beyond the standard library.
+Configurations are specified using Python [dataclasses](https://docs.python.org/3/library/dataclasses.html); `dirconf` has no dependencies beyond the standard library.
 
-For full user documentation and examples please visit **[https://jmarshrossney.github.io/config-foundry/](https://jmarshrossney.github.io/config-foundry/)**.
+For full user documentation and examples please visit **[https://jmarshrossney.github.io/dirconf/](https://jmarshrossney.github.io/dirconf/)**.
 
 ## Installation
 
 ```sh
-pip install config-foundry
+pip install dirconf
 ```
 
 or with `uv`:
 
 ```sh
-uv add config-foundry
+uv add dirconf
 ```
 
 or the equivalent command for other package managers (poetry etc).
@@ -46,10 +46,10 @@ Please open a Pull Request against the `main` branch.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for full details.
 
-## Why `config-foundry`?
+## Why `dirconf`?
 
 A foundry casts objects from moulds.
-Similarly, `config-foundry` lets you declare a *mould* — in the form of a dataclass — that describes the shape of a valid configuration directory.
+Similarly, `dirconf` lets you declare a *mould* — in the form of a dataclass — that describes the shape of a valid configuration directory.
 That mould can then be used to capture configurations from the filesystem or cast new ones from data in Python.
 
 This project was originally called `metaconf` ("configuration of configurations"), but the name was taken on PyPI..

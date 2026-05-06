@@ -4,7 +4,7 @@ import pathlib
 
 import pytest
 
-from config_foundry import make_config_schema, register_handler
+from dirconf import make_config_schema, register_handler
 
 logging.getLogger().setLevel(logging.INFO)
 

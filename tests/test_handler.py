@@ -1,6 +1,6 @@
 import pytest
 
-from config_foundry.handler import (
+from dirconf.handler import (
     handler_registry,
     infer_handler_from_path,
     parse_handler,
