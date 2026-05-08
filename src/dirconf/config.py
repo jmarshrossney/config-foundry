@@ -234,7 +234,7 @@ class DirConfig:
                 self._validate_node(child, full_path, result)
 
     def validate(
-        self, path: str | PathLike, *, strict: bool = True
+        self, path: str | PathLike, *, strict: bool = False
     ) -> ValidationResult:
         """Validate that a directory satisfies the structure defined by this DirConfig.
 
@@ -246,9 +246,9 @@ class DirConfig:
 
         Arguments:
           path: A path to a directory to validate.
-          strict: If ``True`` (default), raises
+          strict: If ``True``, raises
             [`ValidationError`][dirconf.config.ValidationError] on failure.
-            If ``False``, returns a
+            If ``False`` (default), returns a
             [`ValidationResult`][dirconf.config.ValidationResult] describing
             any issues found.
 

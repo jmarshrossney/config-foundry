@@ -192,7 +192,7 @@ def _(mo):
 
     Before reading or writing configurations, you can validate that a directory contains the expected file structure using the `validate` method. This checks that all expected files exist and are readable without actually reading their contents.
 
-    The `strict` flag controls the behavior on failure: when `True` (the default), a `ValidationError` is raised; when `False`, a `ValidationResult` is always returned (truthy if valid, falsy if issues found).
+    The `strict` flag controls the behavior on failure: when `True`, a `ValidationError` is raised; when `False` (the default), a `ValidationResult` is always returned (truthy if valid, falsy if issues found).
     """)
     return
 
@@ -208,7 +208,7 @@ def _(dirconfig):
     import tempfile as _tempfile
 
     with _tempfile.TemporaryDirectory() as empty_dir:
-        validation_result = dirconfig.validate(empty_dir, strict=False)
+        validation_result = dirconfig.validate(empty_dir)
 
     validation_result
     return
@@ -253,7 +253,7 @@ def _(basic_config, dirconfig):
     # Write to a temporary directory, and check it's worked
     with tempfile.TemporaryDirectory() as _temp_dir:
         dirconfig.write(_temp_dir, basic_config)
-        dirconfig.validate(_temp_dir, strict=False)
+        dirconfig.validate(_temp_dir)
         reread_basic_config = dirconfig.read(_temp_dir)
 
     reread_basic_config
@@ -635,7 +635,7 @@ def _(mo):
 def _(config_with_optional, dirconfig_with_optional, tempfile):
     with tempfile.TemporaryDirectory() as _temp_dir:
         dirconfig_with_optional.write(_temp_dir, config_with_optional)
-        _val_result = dirconfig_with_optional.validate(_temp_dir, strict=False)
+        _val_result = dirconfig_with_optional.validate(_temp_dir)
 
     _val_result
     return
@@ -761,7 +761,7 @@ def _(dirconfig_with_abs_path):
 def _(config_with_abs_path, dirconfig_with_abs_path, tempfile):
     with tempfile.TemporaryDirectory() as _temp_dir:
         dirconfig_with_abs_path.write(_temp_dir, config_with_abs_path)
-        _val_result = dirconfig_with_abs_path.validate(_temp_dir, strict=False)
+        _val_result = dirconfig_with_abs_path.validate(_temp_dir)
 
     _val_result
     return
@@ -806,7 +806,7 @@ def _(config_with_meta, dirconfig_with_meta, tempfile):
 
     with tempfile.TemporaryDirectory() as _temp_dir:
         dirconfig_with_meta.write(_temp_dir, config_with_meta)
-        dirconfig_with_meta.validate(_temp_dir, strict=False)
+        dirconfig_with_meta.validate(_temp_dir)
         complete_config = dirconfig_with_meta.read(_temp_dir)
 
     complete_config["metadata"]

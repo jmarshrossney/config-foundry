@@ -259,7 +259,7 @@ class TestValidate:
             "TestConfig",
             {"a": {"path": "a.json", "handler": "simple"}},
         )
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         assert result
 
     def test_detects_missing_file(self, tmp_path):
@@ -269,7 +269,7 @@ class TestValidate:
             "TestConfig",
             {"a": {"path": "a.json", "handler": "simple"}},
         )
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         assert result is not None
         assert result.valid is False
         assert len(result.missing) == 1
@@ -309,7 +309,7 @@ class TestValidate:
                 "b": {"path": "b.json", "handler": "simple"},
             },
         )
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         assert result is not None
         assert len(result.missing) == 2
 
@@ -324,7 +324,7 @@ class TestValidate:
             {"a": {"path": "a.json", "handler": "simple"}},
         )
         try:
-            result = config().validate(tmp_path, strict=False)
+            result = config().validate(tmp_path)
             assert result is not None
             assert result.valid is False
             assert len(result.unreadable) == 1
@@ -351,7 +351,7 @@ class TestValidate:
         (tmp_path / "sub").mkdir()
         (tmp_path / "sub" / "inner.json").write_text('{"inner": true}')
 
-        result = outer_config().validate(tmp_path, strict=False)
+        result = outer_config().validate(tmp_path)
         assert result
 
     def test_nested_dirconfig_detects_missing_child(self, tmp_path):
@@ -371,14 +371,14 @@ class TestValidate:
 
         (tmp_path / "sub").mkdir()
 
-        result = outer_config().validate(tmp_path, strict=False)
+        result = outer_config().validate(tmp_path)
         assert result is not None
         assert result.valid is False
         assert any("inner.json" in str(p) for p in result.missing)
 
     def test_empty_dirconfig_passes(self, tmp_path):
         config = DirConfig()
-        result = config.validate(tmp_path, strict=False)
+        result = config.validate(tmp_path)
         assert result
 
 
@@ -404,7 +404,7 @@ class TestValidateOptionalMissing:
 
         (tmp_path / "required.json").write_text('{"key": "value"}')
 
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         assert result.valid is True
         assert len(result.missing) == 0
         assert len(result.optional_missing) == 1
@@ -426,7 +426,7 @@ class TestValidateOptionalMissing:
             {"optional": {"path": "optional.file", "handler": OptionalHandler}},
         )
 
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         assert result.valid is True
         assert len(result.optional_missing) == 1
 
@@ -449,7 +449,7 @@ class TestValidateOptionalMissing:
             },
         )
 
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         assert result.valid is False
         assert len(result.missing) == 1
         assert len(result.optional_missing) == 1
@@ -470,7 +470,7 @@ class TestValidateOptionalMissing:
             {"optional": {"path": "optional.file", "handler": OptionalHandler}},
         )
 
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         repr_str = repr(result)
         assert "PASSED" in repr_str
         assert "Optional missing (1)" in repr_str
@@ -495,7 +495,7 @@ class TestValidateOptionalMissing:
             },
         )
 
-        result = config().validate(tmp_path, strict=False)
+        result = config().validate(tmp_path)
         repr_str = repr(result)
         assert "FAILED" in repr_str
         assert "Missing (1)" in repr_str
@@ -521,7 +521,7 @@ class TestValidateOptionalMissing:
         (tmp_path / "sub").chmod(0o000)
 
         try:
-            result = outer_config().validate(tmp_path, strict=False)
+            result = outer_config().validate(tmp_path)
             assert result.valid is False
             assert len(result.unreadable) == 1
             assert result.missing == []
