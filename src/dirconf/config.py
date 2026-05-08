@@ -21,7 +21,7 @@ class ValidationResult:
     missing: list[Path] = dataclasses.field(default_factory=list)
     unreadable: list[Path] = dataclasses.field(default_factory=list)
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         if self.valid:
             return "ValidationResult: PASSED"
 
@@ -33,8 +33,6 @@ class ValidationResult:
             lines.append(f"  Unreadable ({len(self.unreadable)}):")
             lines.extend(f"    - {p}" for p in self.unreadable)
         return "\n".join(lines)
-
-    __repr__ = __str__
 
 
 class ValidationError(Exception):
@@ -196,7 +194,7 @@ class DirConfig:
             list(self._tree(prefix="", depth=1, max_depth=max_depth, details=details))
         )
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{type(self).__module__}.{type(self).__name__}\n{self.tree()}"
 
     def _validate_node(
