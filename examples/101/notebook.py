@@ -188,6 +188,35 @@ def _(BasicDirConfig):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
+    #### Validating directories
+
+    Before reading or writing configurations, you can validate that a directory contains the expected file structure using the `validate` method. This checks that all expected files exist and are readable without actually reading their contents.
+
+    The `strict` flag controls the behavior on failure: when `True` (the default), a `ValidationError` is raised; when `False`, a `ValidationResult` is always returned (truthy if valid, falsy if issues found).
+    """)
+    return
+
+
+@app.cell
+def _(dirconfig):
+    dirconfig.validate("./basic")
+    return
+
+
+@app.cell
+def _(dirconfig):
+    import tempfile as _tempfile
+
+    with _tempfile.TemporaryDirectory() as empty_dir:
+        validation_result = dirconfig.validate(empty_dir, strict=False)
+
+    validation_result
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
     #### Reading configurations
 
     Once a `DirConfig` is instantiated, configurations are read into a `dict` by passing a path to a configuration directory into the `read` method.
@@ -606,7 +635,9 @@ def _(mo):
 def _(config_with_optional, dirconfig_with_optional, tempfile):
     with tempfile.TemporaryDirectory() as _temp_dir:
         dirconfig_with_optional.write(_temp_dir, config_with_optional)
-        dirconfig_with_optional.validate(_temp_dir, strict=False)
+        _val_result = dirconfig_with_optional.validate(_temp_dir, strict=False)
+
+    _val_result
     return
 
 

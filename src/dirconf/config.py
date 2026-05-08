@@ -34,6 +34,9 @@ class ValidationResult:
             lines.extend(f"    - {p}" for p in self.unreadable)
         return "\n".join(lines)
 
+    def __bool__(self) -> bool:
+        return self.valid
+
 
 class ValidationError(Exception):
     """Raised when directory validation fails in strict mode."""
@@ -219,7 +222,7 @@ class DirConfig:
 
     def validate(
         self, path: str | PathLike, *, strict: bool = True
-    ) -> ValidationResult | None:
+    ) -> ValidationResult:
         """Validate that a directory satisfies the structure defined by this DirConfig.
 
         Checks that all expected files exist and are readable without actually
@@ -234,9 +237,7 @@ class DirConfig:
             any issues found.
 
         Returns:
-          A ``ValidationResult`` if ``strict=False`` and validation fails.
-          Returns ``None`` if validation passes (or if ``strict=True`` and
-          validation passes).
+          A ``ValidationResult`` (truthy if valid, falsy if issues found).
 
         Raises:
           ValidationError: If ``strict=True`` and validation fails.
@@ -261,7 +262,7 @@ class DirConfig:
                 raise ValidationError(result)
             return result
 
-        return None
+        return result
 
 
 def _make_dirconfig(cls_name: str, config: dict, **kwargs) -> type[DirConfig]:

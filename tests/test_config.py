@@ -259,7 +259,7 @@ class TestValidate:
             {"a": {"path": "a.json", "handler": "simple"}},
         )
         result = config().validate(tmp_path, strict=False)
-        assert result is None
+        assert result
 
     def test_detects_missing_file(self, tmp_path):
         register_handler("simple", SimpleHandler, extensions=[".json"])
@@ -351,7 +351,7 @@ class TestValidate:
         (tmp_path / "sub" / "inner.json").write_text('{"inner": true}')
 
         result = outer_config().validate(tmp_path, strict=False)
-        assert result is None
+        assert result
 
     def test_nested_dirconfig_detects_missing_child(self, tmp_path):
         register_handler("simple", SimpleHandler, extensions=[".json"])
@@ -378,4 +378,4 @@ class TestValidate:
     def test_empty_dirconfig_passes(self, tmp_path):
         config = DirConfig()
         result = config.validate(tmp_path, strict=False)
-        assert result is None
+        assert result
