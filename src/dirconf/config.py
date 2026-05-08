@@ -1,6 +1,7 @@
 import dataclasses
 import json
 import logging
+import os
 from collections.abc import Iterator
 from os import PathLike
 from pathlib import Path
@@ -10,6 +11,48 @@ from .node import Node, path_to_node, to_node
 from .utils import switch_dir
 
 logger = logging.getLogger(__name__)
+
+
+@dataclasses.dataclass
+class ValidationResult:
+    """Result of validating a directory against a DirConfig structure."""
+
+    valid: bool
+    missing: list[Path] = dataclasses.field(default_factory=list)
+    optional_missing: list[Path] = dataclasses.field(default_factory=list)
+    unreadable: list[Path] = dataclasses.field(default_factory=list)
+
+    def __repr__(self) -> str:
+        if self.valid:
+            if not self.optional_missing:
+                return "ValidationResult: PASSED"
+            lines = ["ValidationResult: PASSED"]
+            lines.append(f"  Optional missing ({len(self.optional_missing)}):")
+            lines.extend(f"    - {p}" for p in self.optional_missing)
+            return "\n".join(lines)
+
+        lines = ["ValidationResult: FAILED"]
+        if self.missing:
+            lines.append(f"  Missing ({len(self.missing)}):")
+            lines.extend(f"    - {p}" for p in self.missing)
+        if self.optional_missing:
+            lines.append(f"  Optional missing ({len(self.optional_missing)}):")
+            lines.extend(f"    - {p}" for p in self.optional_missing)
+        if self.unreadable:
+            lines.append(f"  Unreadable ({len(self.unreadable)}):")
+            lines.extend(f"    - {p}" for p in self.unreadable)
+        return "\n".join(lines)
+
+    def __bool__(self) -> bool:
+        return self.valid
+
+
+class ValidationError(Exception):
+    """Raised when directory validation fails in strict mode."""
+
+    def __init__(self, result: ValidationResult) -> None:
+        self.result = result
+        super().__init__(str(result))
 
 
 @dataclasses.dataclass
@@ -163,8 +206,79 @@ class DirConfig:
             list(self._tree(prefix="", depth=1, max_depth=max_depth, details=details))
         )
 
-    def __str__(self) -> str:
+    def __repr__(self) -> str:
         return f"{type(self).__module__}.{type(self).__name__}\n{self.tree()}"
+
+    def _validate_node(
+        self,
+        node: Node,
+        base_path: Path,
+        result: ValidationResult,
+    ) -> None:
+        full_path = base_path / node.path
+        handler = node.handler()
+
+        if not full_path.exists():
+            if getattr(handler, "_filter_missing", False):
+                result.optional_missing.append(full_path)
+            else:
+                result.missing.append(full_path)
+            return
+
+        if not os.access(full_path, os.R_OK):
+            result.unreadable.append(full_path)
+            return
+
+        if isinstance(handler, DirConfig) and full_path.is_dir():
+            for child in handler.nodes(recurse=True):
+                self._validate_node(child, full_path, result)
+
+    def validate(
+        self, path: str | PathLike, *, strict: bool = False
+    ) -> ValidationResult:
+        """Validate that a directory satisfies the structure defined by this DirConfig.
+
+        Checks that all expected files exist and are readable without actually
+        reading their contents. Nodes whose handlers are decorated with
+        ``@filter_missing`` are treated as optional: if the file is absent, it
+        is recorded in ``ValidationResult.optional_missing`` rather than
+        ``ValidationResult.missing``, and does not cause validation to fail.
+
+        Arguments:
+          path: A path to a directory to validate.
+          strict: If ``True``, raises
+            [`ValidationError`][dirconf.config.ValidationError] on failure.
+            If ``False`` (default), returns a
+            [`ValidationResult`][dirconf.config.ValidationResult] describing
+            any issues found.
+
+        Returns:
+          A ``ValidationResult`` (truthy if valid, falsy if issues found).
+
+        Raises:
+          ValidationError: If ``strict=True`` and validation fails.
+        """
+        base_path = Path(path)
+
+        if not base_path.is_dir():
+            result = ValidationResult(valid=False, missing=[base_path])
+            if strict:
+                raise ValidationError(result)
+            return result
+
+        result = ValidationResult(valid=True)
+
+        for field in dataclasses.fields(self):
+            node = getattr(self, field.name)
+            self._validate_node(node, base_path, result)
+
+        if result.missing or result.unreadable:
+            result.valid = False
+            if strict:
+                raise ValidationError(result)
+            return result
+
+        return result
 
 
 def _make_dirconfig(cls_name: str, config: dict, **kwargs) -> type[DirConfig]:
