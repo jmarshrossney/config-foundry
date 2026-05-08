@@ -4,7 +4,12 @@ from pathlib import Path
 import pytest
 
 from dirconf import DirConfig, Handler, make_dirconfig, register_handler
-from dirconf.config import _str_is_json, _str_is_path
+from dirconf.config import (
+    ValidationError,
+    ValidationResult,
+    _str_is_json,
+    _str_is_path,
+)
 from dirconf.handler import handler_registry
 from dirconf.node import Node
 
@@ -195,3 +200,182 @@ class TestStrIsPath:
 
     def test_random_string(self):
         assert not _str_is_path("not a path at all!!<>?")
+
+
+class TestValidationResult:
+    def test_str_passed(self):
+        result = ValidationResult(valid=True)
+        assert str(result) == "ValidationResult: PASSED"
+
+    def test_repr_passed(self):
+        result = ValidationResult(valid=True)
+        assert repr(result) == "ValidationResult: PASSED"
+
+    def test_str_failed_with_missing(self):
+        result = ValidationResult(valid=False, missing=[Path("a.json"), Path("b.json")])
+        s = str(result)
+        assert "FAILED" in s
+        assert "Missing (2)" in s
+        assert "a.json" in s
+        assert "b.json" in s
+
+    def test_str_failed_with_unreadable(self):
+        result = ValidationResult(valid=False, unreadable=[Path("secret.txt")])
+        s = str(result)
+        assert "FAILED" in s
+        assert "Unreadable (1)" in s
+        assert "secret.txt" in s
+
+    def test_str_failed_with_both(self):
+        result = ValidationResult(
+            valid=False,
+            missing=[Path("a.json")],
+            unreadable=[Path("b.json")],
+        )
+        s = str(result)
+        assert "Missing (1)" in s
+        assert "Unreadable (1)" in s
+
+
+class TestValidationError:
+    def test_exception_message_uses_result_str(self):
+        result = ValidationResult(valid=False, missing=[Path("a.json")])
+        exc = ValidationError(result)
+        assert str(exc) == str(result)
+
+    def test_exception_stores_result(self):
+        result = ValidationResult(valid=False, missing=[Path("a.json")])
+        exc = ValidationError(result)
+        assert exc.result is result
+
+
+class TestValidate:
+    def test_passes_for_valid_directory(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+        (tmp_path / "a.json").write_text('{"key": "value"}')
+
+        config = make_dirconfig(
+            "TestConfig",
+            {"a": {"path": "a.json", "handler": "simple"}},
+        )
+        result = config().validate(tmp_path, strict=False)
+        assert result is None
+
+    def test_detects_missing_file(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+
+        config = make_dirconfig(
+            "TestConfig",
+            {"a": {"path": "a.json", "handler": "simple"}},
+        )
+        result = config().validate(tmp_path, strict=False)
+        assert result is not None
+        assert result.valid is False
+        assert len(result.missing) == 1
+        assert result.missing[0].name == "a.json"
+
+    def test_raises_in_strict_mode(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+
+        config = make_dirconfig(
+            "TestConfig",
+            {"a": {"path": "a.json", "handler": "simple"}},
+        )
+        with pytest.raises(ValidationError) as exc_info:
+            config().validate(tmp_path, strict=True)
+        assert exc_info.value.result.valid is False
+
+    def test_detects_missing_base_directory(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+        nonexistent = tmp_path / "nonexistent"
+
+        config = make_dirconfig(
+            "TestConfig",
+            {"a": {"path": "a.json", "handler": "simple"}},
+        )
+        result = config().validate(nonexistent, strict=False)
+        assert result is not None
+        assert result.valid is False
+        assert len(result.missing) == 1
+
+    def test_multiple_missing_files(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+
+        config = make_dirconfig(
+            "TestConfig",
+            {
+                "a": {"path": "a.json", "handler": "simple"},
+                "b": {"path": "b.json", "handler": "simple"},
+            },
+        )
+        result = config().validate(tmp_path, strict=False)
+        assert result is not None
+        assert len(result.missing) == 2
+
+    def test_unreadable_file_detected(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+        unreadable = tmp_path / "a.json"
+        unreadable.write_text('{"key": "value"}')
+        unreadable.chmod(0o000)
+
+        config = make_dirconfig(
+            "TestConfig",
+            {"a": {"path": "a.json", "handler": "simple"}},
+        )
+        try:
+            result = config().validate(tmp_path, strict=False)
+            assert result is not None
+            assert result.valid is False
+            assert len(result.unreadable) == 1
+        finally:
+            unreadable.chmod(0o644)
+
+    def test_nested_dirconfig_recurses(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+
+        inner_config = make_dirconfig(
+            "InnerConfig",
+            {"inner_file": {"path": "inner.json", "handler": "simple"}},
+        )
+
+        outer_config = make_dirconfig(
+            "OuterConfig",
+            {
+                "outer_file": {"path": "outer.json", "handler": "simple"},
+                "subdir": {"path": "sub", "handler": inner_config},
+            },
+        )
+
+        (tmp_path / "outer.json").write_text('{"outer": true}')
+        (tmp_path / "sub").mkdir()
+        (tmp_path / "sub" / "inner.json").write_text('{"inner": true}')
+
+        result = outer_config().validate(tmp_path, strict=False)
+        assert result is None
+
+    def test_nested_dirconfig_detects_missing_child(self, tmp_path):
+        register_handler("simple", SimpleHandler, extensions=[".json"])
+
+        inner_config = make_dirconfig(
+            "InnerConfig",
+            {"inner_file": {"path": "inner.json", "handler": "simple"}},
+        )
+
+        outer_config = make_dirconfig(
+            "OuterConfig",
+            {
+                "subdir": {"path": "sub", "handler": inner_config},
+            },
+        )
+
+        (tmp_path / "sub").mkdir()
+
+        result = outer_config().validate(tmp_path, strict=False)
+        assert result is not None
+        assert result.valid is False
+        assert any("inner.json" in str(p) for p in result.missing)
+
+    def test_empty_dirconfig_passes(self, tmp_path):
+        config = DirConfig()
+        result = config.validate(tmp_path, strict=False)
+        assert result is None
